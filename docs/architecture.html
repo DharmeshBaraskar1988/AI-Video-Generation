@@ -1,0 +1,526 @@
+<title>D-Storify POC Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap">
+<style>
+/* Layout: tabbed tool. Flow tab = vertical pipeline of step cards (left) + sticky step detail (right); stacks on phones. */
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --sunk:#E9EFED; --ink:#13201F; --muted:#56696A; --line:#D3DDDA;
+  --accent:#0F5B5C; --accent-soft:#DCEDEB; --gold:#B8860B; --gold-soft:#F6EBCB; --loss:#A3243B; --good:#1E7A4F;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --arabic:"IBM Plex Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1615; --surface:#14201F; --sunk:#1A2927; --ink:#E4EDEB; --muted:#93A6A3; --line:#29403D;
+  --accent:#5BBDB6; --accent-soft:#16332F; --gold:#E3B23C; --gold-soft:#3A3016; --loss:#F07A8E; --good:#5FD39A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1615; --surface:#14201F; --sunk:#1A2927; --ink:#E4EDEB; --muted:#93A6A3; --line:#29403D;
+  --accent:#5BBDB6; --accent-soft:#16332F; --gold:#E3B23C; --gold-soft:#3A3016; --loss:#F07A8E; --good:#5FD39A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:20px 48px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:40px;height:40px;border-radius:10px;background:var(--accent);display:grid;grid-template-columns:repeat(3,6px);align-items:end;gap:3px;padding:9px 8px;flex:none}
+.mark i{display:block;border-radius:2px;background:var(--gold)}
+.mark i:nth-child(1){height:8px}.mark i:nth-child(2){height:14px}.mark i:nth-child(3){height:20px;background:var(--surface)}
+h1{font-family:var(--display);font-weight:700;font-size:1.65rem;line-height:1.1;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0;font-size:.92rem}
+.tabs{display:flex;gap:4px;background:var(--sunk);padding:4px;border-radius:10px}
+.tabs button{border:0;background:transparent;color:var(--muted);font:500 .9rem var(--body);padding:8px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .08)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.eyebrow{font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* pipeline picker */
+.picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0 14px}
+.pick{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 14px;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:2px}
+.pick b{font-family:var(--display);font-weight:600;font-size:1.02rem}
+.pick span{color:var(--muted);font-size:.84rem}
+.pick[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:10px 0 16px}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 .88rem var(--body);padding:7px 12px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:default}
+.toggles{display:flex;gap:14px;flex-wrap:wrap;font-size:.88rem;color:var(--muted)}
+.toggles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.counter{font:500 .85rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* flow */
+.flowgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:24px;align-items:start}
+.lane{display:flex;flex-direction:column}
+.feeds{font-size:.84rem;color:var(--muted);margin:0 0 12px}
+.step{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 14px 12px 52px;cursor:pointer;text-align:left;color:var(--ink);font:inherit;width:100%;transition:border-color .2s, background .2s}
+.step .num{position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font:500 .78rem var(--mono);color:var(--muted);background:var(--surface)}
+.step .row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.step h3{margin:0;font-family:var(--display);font-weight:600;font-size:1.02rem}
+.kind{font:500 .68rem var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.kind.ai{border-color:var(--accent);color:var(--accent)}
+.kind.tool{border-color:var(--gold);color:var(--gold)}
+.kind.output{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.step .what{margin:4px 0 0;color:var(--muted);font-size:.88rem}
+.step .tech{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 .76rem var(--mono);background:var(--sunk);border-radius:6px;padding:2px 7px;color:var(--ink)}
+.step .out{margin-top:8px;font:400 .8rem var(--mono);background:var(--sunk);border-left:2px solid var(--gold);padding:6px 8px;border-radius:0 6px 6px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.step.done{border-color:var(--accent)}
+.step.done .num{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.step.active{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.step.active .num{background:var(--gold);border-color:var(--gold);color:var(--surface)}
+.arrow{height:30px;margin-left:26px;position:relative}
+.arrow::before{content:"";position:absolute;left:0;top:2px;bottom:8px;border-left:2px dashed var(--line)}
+.arrow::after{content:"";position:absolute;left:-5px;bottom:2px;border:6px solid transparent;border-top-color:var(--line);border-bottom:0}
+.arrow span{position:absolute;left:16px;top:5px;font:400 .74rem var(--mono);color:var(--muted)}
+.arrow.lit::before{border-left:2px solid var(--accent)}
+.arrow.lit::after{border-top-color:var(--accent)}
+.hide-what .what,.hide-tech .tech,.hide-out .out{display:none}
+
+/* detail panel */
+.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:4px 0 6px;text-wrap:balance}
+.panel .lead{margin:0 0 14px;color:var(--muted)}
+.dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px 14px;margin:0;font-size:.9rem}
+.dl dt{font:500 .72rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding-top:2px}
+.dl dd{margin:0}
+.models{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.model{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.86rem}
+.model .eyebrow{display:block;margin-bottom:2px}
+.model.free{border-color:var(--accent)}
+.sample{font:400 .82rem/1.55 var(--mono);background:var(--sunk);border-radius:8px;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.ar{font-family:var(--arabic);direction:rtl;text-align:right;font-size:.95rem}
+.outcome{margin-top:14px;padding:10px 12px;border-radius:8px;background:var(--gold-soft);font-size:.9rem}
+.phase{font:500 .76rem var(--mono);color:var(--accent)}
+.hide-tech .panel .techrow{display:none}
+.hide-out .panel .outrow{display:none}
+
+/* admin */
+.admin{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+.card h2{font-family:var(--display);font-weight:600;font-size:1.12rem;margin:0 0 4px}
+.card p.note{margin:0 0 14px;color:var(--muted);font-size:.88rem}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-weight:500;font-size:.88rem}
+.field small{color:var(--muted);font-size:.8rem}
+select,input[type="text"],input[type="file"],input[type="range"]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+input[type="range"]{padding:0;accent-color:var(--accent)}
+.inline{display:flex;gap:8px;align-items:center}
+.inline select{flex:1;min-width:0}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.88rem}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.warn{border-left:3px solid var(--loss);background:var(--sunk);padding:8px 10px;border-radius:0 8px 8px 0;font-size:.84rem;margin:0 0 14px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:6px;font:400 .78rem var(--mono);border:1px solid var(--line);border-radius:8px;padding:4px 8px 4px 4px}
+.sw i{width:20px;height:20px;border-radius:5px;display:block}
+.savebar{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;align-items:center}
+.toast{font-size:.88rem;color:var(--good)}
+.disabled-row{opacity:.55}
+
+/* plan */
+.gantt{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;overflow-x:auto}
+.ghead,.grow{display:grid;grid-template-columns:200px repeat(6,minmax(70px,1fr));align-items:center;min-width:640px}
+.ghead div{font:500 .72rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.grow{border-bottom:1px solid var(--line);min-height:42px}
+.grow:last-child{border-bottom:0}
+.grow .gl{font-size:.88rem;font-weight:500;padding-right:10px}
+.bar{height:16px;border-radius:5px;background:var(--accent-soft);border:1.5px solid var(--accent)}
+.bar.gold{background:var(--gold-soft);border-color:var(--gold)}
+.phases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+.ph h3{font-family:var(--display);font-weight:600;font-size:1.05rem;margin:2px 0 8px}
+.ph ul{margin:0 0 10px;padding-left:18px;font-size:.9rem}
+.ph li{margin-bottom:3px}
+.ph .dw{font-size:.86rem;border-top:1px solid var(--line);padding-top:8px;color:var(--muted)}
+.ph .dw b{color:var(--ink);font-weight:600}
+.legend{display:flex;gap:16px;font-size:.84rem;color:var(--muted);margin-top:12px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:18px;height:10px;border-radius:3px;display:block}
+
+@media (max-width:860px){
+  .flowgrid,.admin,.phases{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static}
+  .picker{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:420px){.models{grid-template-columns:minmax(0,1fr)}.dl{grid-template-columns:minmax(0,1fr)}}
+.hide-res .res{display:none}
+.prompt-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div>
+        <h1>D-Storify POC Architecture</h1>
+        <p class="sub">Quarterly results to video, summary, Q&amp;A and live stock chat. Free stack, English + Arabic.</p>
+      </div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-flow" aria-selected="true" data-tab="flow">Flow</button>
+      <button role="tab" id="tab-admin" aria-selected="false" data-tab="admin">Admin settings</button>
+      <button role="tab" id="tab-plan" aria-selected="false" data-tab="plan">Build steps</button>
+    </div>
+  </header>
+
+  <!-- FLOW -->
+  <section id="view-flow">
+    <div class="picker" id="picker"></div>
+    <div class="toolbar">
+      <div class="ctrls">
+        <button class="btn" id="prev">← Back</button>
+        <button class="btn primary" id="next">Next step →</button>
+        <button class="btn" id="play">Play walkthrough</button>
+        <button class="btn" id="reset">Reset</button>
+        <span class="counter" id="counter"></span>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="t-what" checked> What it does</label>
+        <label><input type="checkbox" id="t-tech" checked> Tech &amp; models</label>
+        <label><input type="checkbox" id="t-out"> Outputs on cards</label>
+      </div>
+    </div>
+    <div class="flowgrid" id="flowgrid">
+      <div>
+        <p class="feeds" id="feeds"></p>
+        <div class="lane" id="lane"></div>
+      </div>
+      <aside class="panel" id="panel" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view-admin" hidden>
+    <form class="admin" id="adminForm">
+      <div class="card">
+        <h2>Voices</h2>
+        <p class="note">Every video and spoken answer uses these voices. Change them any time; new renders pick up the change.</p>
+        <div class="field">
+          <label for="v-engine">Voice engine</label>
+          <select id="v-engine">
+            <option value="edge" selected>Edge TTS (free, neural stock voices incl. Qatari Arabic)</option>
+            <option value="silma">SILMA TTS (free, open source, Arabic + English, cloning)</option>
+            <option value="piper">Piper (free, offline, lightweight)</option>
+            <option value="eleven" disabled>ElevenLabs brand clone (paid, later)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="v-en">English voice</label>
+          <div class="inline"><select id="v-en"></select><button type="button" class="btn" data-preview="en">Preview</button></div>
+        </div>
+        <div class="field">
+          <label for="v-ar">Arabic voice</label>
+          <div class="inline"><select id="v-ar"></select><button type="button" class="btn" data-preview="ar">Preview</button></div>
+          <small id="previewNote" hidden>Preview plays in the built app; this page is a design mock.</small>
+        </div>
+        <div class="field">
+          <label for="v-speed">Speaking speed <span class="counter" id="speedVal">1.00×</span></label>
+          <input type="range" id="v-speed" min="0.85" max="1.15" step="0.05" value="1">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Add a custom voice</h2>
+        <p class="note">Clone a real person's voice from a short clip (SILMA needs under 8 seconds). The voice joins the lists on the left.</p>
+        <p class="warn">Only use recordings of someone who has agreed in writing, such as a D-Storify spokesperson. Voices taken from YouTube or other people's videos are blocked: they copy a real person without consent and break the platforms' terms.</p>
+        <div class="field">
+          <label for="cv-name">Voice name</label>
+          <input type="text" id="cv-name" placeholder="e.g. Spokesperson – Arabic">
+        </div>
+        <div class="field">
+          <label for="cv-file">Reference clip (WAV or MP3, 6–30 seconds, clean speech)</label>
+          <input type="file" id="cv-file" accept="audio/*">
+        </div>
+        <label class="check"><input type="checkbox" id="cv-consent"> I have the speaker's written consent to clone this voice for D-Storify content.</label>
+        <div style="margin-top:12px"><button type="button" class="btn" id="cv-add">Add voice</button> <span class="toast" id="cv-msg"></span></div>
+      </div>
+
+      <div class="card">
+        <h2>Video</h2>
+        <p class="note">Defaults for one-click quarterly videos.</p>
+        <div class="field">
+          <label for="vid-len">Target length <span class="counter" id="lenVal">2:30</span></label>
+          <input type="range" id="vid-len" min="120" max="180" step="10" value="150">
+        </div>
+        <div class="field">
+          <label for="vid-music">Background music</label>
+          <select id="vid-music">
+            <option>Calm corporate (royalty-free library track)</option>
+            <option>Upbeat tech (royalty-free library track)</option>
+            <option>No music</option>
+          </select>
+          <small>Upload approved tracks from free libraries; each keeps its licence note.</small>
+        </div>
+        <label class="check"><input type="checkbox" id="vid-en" checked> Render English version</label>
+        <label class="check"><input type="checkbox" id="vid-ar" checked> Render Arabic version (right-to-left scenes)</label>
+        <label class="check"><input type="checkbox" id="vid-cap" checked> Burn in captions</label>
+        <label class="check"><input type="checkbox" id="vid-social" checked> Also make a 15-second social cut</label>
+        <label class="check disabled-row"><input type="checkbox" id="vid-avatar" disabled> AI presenter for intro and outro (paid, later)</label>
+      </div>
+
+      <div class="card">
+        <h2>AI model and brand</h2>
+        <p class="note">Swap the language model without touching the pipeline.</p>
+        <div class="field">
+          <label for="llm">Language model</label>
+          <select id="llm">
+            <option>OpenAI small GPT model (your key, cents per video)</option>
+            <option>Gemini API free tier</option>
+            <option>Local open model via Ollama (Qwen / Llama)</option>
+            <option disabled>Claude Sonnet 5.5 (paid, later)</option>
+          </select>
+        </div>
+        <label class="check"><input type="checkbox" id="review" checked> Require human approval before a video is published</label>
+        <div class="field" style="margin-top:14px">
+          <label>Brand kit (placeholder)</label>
+          <div class="swatches">
+            <span class="sw"><i style="background:#0F3D3E"></i>#0F3D3E</span>
+            <span class="sw"><i style="background:#E3B23C"></i>#E3B23C</span>
+            <span class="sw"><i style="background:#8A1538"></i>#8A1538</span>
+          </div>
+          <small>Logo, colours and fonts are replaceable from this card in the built app.</small>
+        </div>
+      </div>
+
+      <div class="savebar"><span class="toast" id="saveMsg"></span><button type="submit" class="btn primary">Save settings</button></div>
+    </form>
+  </section>
+
+  <!-- PLAN -->
+  <section id="view-plan" hidden>
+    <div class="gantt">
+      <p class="eyebrow" style="margin:0 0 10px">Two-day POC build · first video by the end of day 1</p>
+      <div class="ghead"><div>Workstream</div><div>Day 1 AM</div><div>Day 1 PM</div><div>Day 1 eve</div><div>Day 2 AM</div><div>Day 2 PM</div><div>Day 2 eve</div></div>
+      <div id="gantt"></div>
+      <div class="legend"><span><i style="background:var(--accent-soft);border:1.5px solid var(--accent)"></i>Build</span><span><i style="background:var(--gold-soft);border:1.5px solid var(--gold)"></i>Test and demo</span></div>
+    </div>
+    <div class="toolbar" style="padding-top:22px">
+      <div class="ctrls">
+        <button class="btn" id="bprev">← Back</button>
+        <button class="btn primary" id="bnext">Next step →</button>
+        <span class="counter" id="bcounter"></span>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="bt-res" checked> Results on cards</label>
+      </div>
+    </div>
+    <div class="flowgrid" id="buildgrid">
+      <div>
+        <p class="feeds">Step 0 is yours; Steps 1–12 are prompts you paste into Claude Code in VS Code. Check each result before the next step.</p>
+        <div class="lane" id="blane"></div>
+      </div>
+      <aside class="panel" id="bpanel" aria-live="polite"></aside>
+    </div>
+  </section>
+</div>
+
+<script>
+const P = {
+  video:{name:"Results video", tag:"One click, 2–3 min, EN + AR", feeds:"Writes its script into the shared index, so Video Q&A can answer from it.", steps:[
+    {t:"Pick the quarter",k:"input",what:"Admin chooses Q1–Q4 and clicks Generate. The quarter's data file is loaded and checked.",in:"Quarter data file (JSON / Excel) + results PDFs",free:"FastAPI upload + Pydantic schema check",later:"Same",out:"period: Q2 2026 (Apr–Jun)\nrevenue: 1,734 QR m (derived)\nnet_profit: −518 QR m\nstatus: valid, 1 derived field flagged",oc:"One locked set of numbers that every later step must match.",ph:"Phase 1",arrow:"validated numbers"},
+    {t:"Pull the story behind the numbers",k:"tool",what:"Searches the results documents for the reasons: volumes, prices, segments, events.",in:"Quarter + question “what drove this quarter?”",free:"Day 1: drivers from the data file · Day 2: Chroma + OpenAI embeddings",later:"Postgres + pgvector at scale",out:"6 cited passages, e.g.\n“lower sales volumes … shipping disruptions” (Tribune, H1)\n“steel segment profit grew” (IR deck, slide 25)",oc:"The script explains why results moved, with sources.",ph:"Phase 1",arrow:"context with citations"},
+    {t:"Write the script and scene plan",k:"ai",what:"The LLM writes a 350–450 word English script and a scene list. Numbers go in as placeholders, never typed by the model.",in:"Numbers + cited context + brand tone",free:"Gemini free tier, or Qwen / Llama via Ollama",later:"Claude Sonnet 5.5",out:"Scene 3 – Headline\n“Revenue for the quarter was {{revenue}}, and the group recorded a net loss of {{net_profit}} …”",oc:"A broadcast-style script, about 2.5 minutes long.",ph:"Phase 2",arrow:"script + scenes"},
+    {t:"Fact-check and translate",k:"tool",what:"Fills placeholders from the data file, checks every figure, then makes the Arabic version.",in:"Script with placeholders",free:"Python validator + LLM translation + review flag",later:"Same, plus terminology glossary",out:"Numbers checked: 14 / 14 match\nArabic script ready for review",ar:"سجّلت المجموعة صافي خسارة بلغت 518 مليون ريال قطري في الربع الثاني من عام 2026.",oc:"Two scripts with zero unverified numbers.",ph:"Phase 2",arrow:"EN + AR scripts"},
+    {t:"Generate the voice",k:"ai",what:"Speaks each script in the voices chosen in Admin settings, and records when every word is said.",in:"Approved scripts + selected voices",free:"Edge TTS (word timings built in) · SILMA for free cloning",later:"ElevenLabs brand clone",out:"voice_en.wav  2:31\nvoice_ar.wav  2:38\nword timings: 812 words",oc:"Natural narration, swappable from Admin settings.",ph:"Phase 3",arrow:"audio + word timings"},
+    {t:"Render branded scenes",k:"tool",what:"Turns each scene into animation: KPI counters, bar charts, segment donut, red/green change arrows. Arabic scenes run right to left.",in:"Scene list + numbers + brand kit",free:"Remotion (React video templates)",later:"Same, plus optional HeyGen presenter",out:"7 scenes × 2 languages\n1920×1080, 30 fps",oc:"Exact charts drawn from data, never imagined.",ph:"Phase 4",arrow:"scene clips"},
+    {t:"Assemble the video",k:"tool",what:"Combines voice, scenes, captions and music, lowering music under speech.",in:"Clips + audio + timings + music track",free:"FFmpeg",later:"Same",out:"DStorify_Q2-2026_EN.mp4  2:31\nDStorify_Q2-2026_AR.mp4  2:38\nsocial_cut_EN.mp4  0:15",oc:"Finished, captioned videos in both languages.",ph:"Phase 4",arrow:"MP4 files"},
+    {t:"Review and publish",k:"output",what:"An admin watches and approves. The script and timings go into the index for Q&A.",in:"Videos + scripts",free:"Approval screen + index update",later:"Same",out:"Status: approved by admin\nVideo page live with Q&A panel",oc:"A public-ready results video with an interactive Q&A beside it.",ph:"Phase 4"}
+  ]},
+  summary:{name:"Document summary", tag:"RAG over long reports", feeds:"Builds the shared index that the video, Q&A and summary all read.", steps:[
+    {t:"Upload the document",k:"input",what:"Admin uploads the financial statements, investor deck or annual report.",in:"PDF / DOCX, Arabic or English",free:"FastAPI upload, file storage",later:"Same",out:"iq-financial-statements-h1-2026.pdf\n38 pages, English",oc:"Source documents stored with their quarter tag.",ph:"Phase 1",arrow:"raw file"},
+    {t:"Read text and tables",k:"tool",what:"Extracts text and keeps financial tables intact, with page numbers.",in:"PDF",free:"pdfplumber + PyMuPDF (tables kept)",later:"Docling for complex layouts",out:"412 text blocks\n27 tables (income statement, balance sheet …)",oc:"Tables stay as tables, so numbers aren't scrambled.",ph:"Phase 1",arrow:"text + tables"},
+    {t:"Chunk and embed",k:"ai",what:"Splits into 500–800 token passages tagged with section and page, and turns each into a search vector.",in:"Parsed blocks",free:"OpenAI text-embedding-3-small (your key)",later:"Same",out:"186 chunks\nmeta: quarter, section, page",oc:"Every passage is searchable in Arabic or English.",ph:"Phase 1",arrow:"vectors"},
+    {t:"Store in the shared index",k:"tool",what:"Saves passages, vectors and keywords for hybrid search.",in:"Chunks + vectors",free:"Chroma (local, zero setup)",later:"Postgres + pgvector",out:"index: dstorify_results\n186 rows added",oc:"One index serves summary, video and Q&A.",ph:"Phase 1",arrow:"indexed passages"},
+    {t:"Summarise each section",k:"ai",what:"Writes a short summary per section (results, segments, cash, outlook) with page citations.",in:"Passages grouped by section",free:"Gemini free tier / local model",later:"Claude Sonnet 5.5",out:"Segments – p.14\n“Petrochemicals made a loss; steel profit grew year on year.”",oc:"Readable section notes, each traceable to a page.",ph:"Phase 2",arrow:"section notes"},
+    {t:"Executive summary",k:"output",what:"Combines section notes into a one-page summary in English and Arabic, with presets for executives and investors.",in:"Section notes",free:"Same LLM",later:"Same",out:"H1 2026 at a glance\n• Revenue ~QR 5.9bn; net profit QR 216m (−89% YoY)\n• Q2 swung to a loss",ar:"إيرادات النصف الأول نحو 5.9 مليار ريال قطري، وصافي الربح 216 مليون ريال.",oc:"A cited one-pager anyone can read in two minutes.",ph:"Phase 2"}
+  ]},
+  qa:{name:"Video Q&A", tag:"Ask while watching", feeds:"Reads the shared index: the video script first, then the full documents.", steps:[
+    {t:"Viewer asks a question",k:"input",what:"Typed beside the player, in English or Arabic. Suggested questions are offered.",in:"Question + current video",free:"React chat panel",later:"Same, plus voice input",out:"“Why did the company make a loss in Q2?”",oc:"Questions in the viewer's own words.",ph:"Phase 5",arrow:"question"},
+    {t:"Search script and documents",k:"tool",what:"Hybrid search over this video's script first, then the source documents.",in:"Question",free:"Chroma + keyword search",later:"Same",out:"Top 12 passages\n(4 from script, 8 from documents)",oc:"Answers stay tied to what was said and filed.",ph:"Phase 5",arrow:"candidates"},
+    {t:"Rerank",k:"ai",what:"Keeps the 4 most relevant passages.",in:"12 candidates",free:"Small LLM scores each passage",later:"Hosted reranker",out:"4 passages kept, scores 0.91 → 0.74",oc:"Less noise, more precise answers.",ph:"Phase 5",arrow:"best passages"},
+    {t:"Write a grounded answer",k:"ai",what:"Answers only from the passages, cites them and links to the moment in the video.",in:"Question + passages",free:"Gemini free tier / local model",later:"Claude Haiku 5.5",out:"“Lower production and shipping disruptions cut sales volumes, outweighing higher prices.”\nExplained at 1:24 · Source: H1 press release",oc:"A short answer with a jump-to-timestamp.",ph:"Phase 5",arrow:"answer + timestamp"},
+    {t:"Speak the answer (optional)",k:"ai",what:"Reads the answer aloud in the same video voice.",in:"Answer text",free:"Edge TTS (same voice as the video)",later:"ElevenLabs",out:"answer.wav 0:09",oc:"Feels like talking to the presenter.",ph:"Phase 5",arrow:"answer shown"},
+    {t:"Guardrail",k:"output",what:"If nothing relevant is found, it says so instead of guessing, and logs the question.",in:"Low-confidence result",free:"Score threshold + log table",later:"Same",out:"“That isn't covered in this video or the Q2 documents.”",oc:"No made-up answers in front of investors.",ph:"Phase 5"}
+  ]},
+  stock:{name:"Stock chatbot", tag:"Live QSE prices, precise", feeds:"Separate from the index: prices only ever come from a live data source.", steps:[
+    {t:"User asks in plain language",k:"input",what:"Any QSE stock question in English or Arabic.",in:"Chat message",free:"React chat",later:"Same",out:"“How much did Industries Qatar move this week?”",oc:"No ticker codes needed.",ph:"Phase 5",arrow:"message"},
+    {t:"Find the company and intent",k:"ai",what:"Maps the name to a ticker from the list of ~55 QSE companies, and picks the right tool.",in:"Message + company list",free:"Gemini free tier tool calling",later:"Claude Haiku 5.5",out:"ticker: IQCD.QA\nintent: weekly change\ntool: get_history(7d)",oc:"The right stock, even with misspellings or Arabic names.",ph:"Phase 5",arrow:"tool call"},
+    {t:"Fetch live data",k:"tool",what:"Calls the price source; news questions go to a web search API instead.",in:"Tool call",free:"oanor QSE API (100 calls/month) or yfinance, with caching",later:"Licensed data vendor",out:"{ close: 10.84, prev_week: 10.61,\n  ts: \"2026-10-08 13:15 AST\", delayed: true }",oc:"Real numbers from a named source, with a timestamp.",ph:"Phase 5",arrow:"raw JSON"},
+    {t:"Calculate in code",k:"tool",what:"Percent changes and averages are computed by Python, not by the model.",in:"Raw prices",free:"Python",later:"Same",out:"change_7d: +2.17%",oc:"Arithmetic that is always right.",ph:"Phase 5",arrow:"verified figures"},
+    {t:"Compose the answer",k:"ai",what:"Writes one or two sentences around the figures, copying them exactly.",in:"Figures + question",free:"Same LLM",later:"Same",out:"Sample: “IQCD closed at QR 10.84, up 2.17% on the week (as of 8 Oct, 13:15 Doha, 15-min delayed). Source: oanor.”",oc:"A precise, sourced answer, not investment advice.",ph:"Phase 5",arrow:"answer"},
+    {t:"Log for audit",k:"output",what:"Stores the question, raw data and answer. If the source fails, the bot says it can't fetch a price.",in:"Answer + raw JSON",free:"Postgres log table",later:"Same",out:"log #2291 saved",oc:"Every price shown can be traced back.",ph:"Phase 5"}
+  ]}
+};
+P.qa.steps[1].out="Top 12 passages\n(4 from script, 8 from documents)";
+P.stock.steps[2].out="Sample response\n{ close: 10.84, prev_week: 10.61,\n  ts: \"2026-10-08 13:15 AST\", delayed: true }";
+
+const KIND={input:"Input",ai:"AI model",tool:"Tool",output:"Output"};
+let cur="video", idx=0, timer=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderPicker(){
+  $("#picker").innerHTML=Object.entries(P).map(([k,v])=>`<button class="pick" aria-pressed="${k===cur}" data-p="${k}"><b>${esc(v.name)}</b><span>${esc(v.tag)}</span></button>`).join("");
+}
+function renderLane(){
+  const p=P[cur];
+  $("#feeds").textContent=p.feeds;
+  $("#lane").innerHTML=p.steps.map((s,i)=>{
+    const cls=i<idx?"done":i===idx?"active":"";
+    const card=`<button class="step ${cls}" data-i="${i}" aria-current="${i===idx?"step":"false"}">
+      <span class="num">${i+1}</span>
+      <div class="row"><h3>${esc(s.t)}</h3><span class="kind ${s.k}">${KIND[s.k]}</span></div>
+      <p class="what">${esc(s.what)}</p>
+      <div class="tech"><span class="chip">${esc(s.free)}</span></div>
+      <div class="out">${esc(s.out)}</div>
+    </button>`;
+    const arrow=i<p.steps.length-1?`<div class="arrow ${i<idx?"lit":""}"><span>${esc(s.arrow||"")}</span></div>`:"";
+    return card+arrow;
+  }).join("");
+  $("#counter").textContent=`Step ${idx+1} of ${p.steps.length}`;
+  $("#prev").disabled=idx===0;
+  $("#next").disabled=idx===p.steps.length-1;
+  renderPanel();
+}
+function renderPanel(){
+  const s=P[cur].steps[idx];
+  $("#panel").innerHTML=`
+    <div class="row" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="eyebrow">${esc(P[cur].name)} · step ${idx+1}</span><span class="phase">Built in ${esc(s.ph)}</span></div>
+    <h2>${esc(s.t)}</h2>
+    <p class="lead">${esc(s.what)}</p>
+    <dl class="dl">
+      <dt>Input</dt><dd>${esc(s.in)}</dd>
+      <dt class="techrow">Tech / model</dt><dd class="techrow"><div class="models">
+        <div class="model free"><span class="eyebrow">Free POC</span>${esc(s.free)}</div>
+        <div class="model"><span class="eyebrow">Paid, later</span>${esc(s.later)}</div></div></dd>
+      <dt class="outrow">Output</dt><dd class="outrow"><pre class="sample">${esc(s.out)}</pre>${s.ar?`<p class="sample ar" style="margin-top:8px">${esc(s.ar)}</p>`:""}</dd>
+    </dl>
+    <div class="outcome"><b>Outcome:</b> ${esc(s.oc)}</div>`;
+}
+function setToggles(){
+  const g=$("#view-flow");
+  g.classList.toggle("hide-what",!$("#t-what").checked);
+  g.classList.toggle("hide-tech",!$("#t-tech").checked);
+  g.classList.toggle("hide-out",!$("#t-out").checked);
+}
+function stop(){clearInterval(timer);timer=null;$("#play").textContent="Play walkthrough";}
+$("#picker").addEventListener("click",e=>{const b=e.target.closest(".pick");if(!b)return;stop();cur=b.dataset.p;idx=0;renderPicker();renderLane();});
+$("#lane").addEventListener("click",e=>{const b=e.target.closest(".step");if(!b)return;stop();idx=+b.dataset.i;renderLane();});
+$("#next").onclick=()=>{stop();if(idx<P[cur].steps.length-1){idx++;renderLane();}};
+$("#prev").onclick=()=>{stop();if(idx>0){idx--;renderLane();}};
+$("#reset").onclick=()=>{stop();idx=0;renderLane();};
+$("#play").onclick=()=>{
+  if(timer){stop();return;}
+  if(idx>=P[cur].steps.length-1)idx=0;
+  renderLane();$("#play").textContent="Pause";
+  timer=setInterval(()=>{if(idx<P[cur].steps.length-1){idx++;renderLane();}else stop();},2600);
+};
+["#t-what","#t-tech","#t-out"].forEach(id=>$(id).addEventListener("change",setToggles));
+
+/* tabs */
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["flow","admin","plan"].forEach(t=>$("#view-"+t).hidden=t!==b.dataset.tab);
+  stop();
+});
+if(["admin","plan"].includes(location.hash.slice(1))) document.querySelector(`[data-tab="${location.hash.slice(1)}"]`).click();
+
+/* admin */
+const VOICES={
+  silma:{en:["SILMA – reference voice A (male)","SILMA – reference voice B (female)"],ar:["SILMA – Arabic MSA, male","SILMA – Arabic MSA, female"]},
+  edge:{en:["en-US-GuyNeural","en-GB-SoniaNeural","en-US-AriaNeural"],ar:["ar-QA-MoazNeural (Qatari)","ar-QA-AmalNeural (Qatari)"]},
+  piper:{en:["en_US-amy","en_GB-alan"],ar:["ar_JO-kareem"]}
+};
+let custom=[];
+function fillVoices(){
+  const v=VOICES[$("#v-engine").value]||VOICES.silma;
+  const extra=$("#v-engine").value==="silma"?custom:[];
+  $("#v-en").innerHTML=[...v.en,...extra.map(c=>c+" (custom)")].map(o=>`<option>${esc(o)}</option>`).join("");
+  $("#v-ar").innerHTML=[...v.ar,...extra.map(c=>c+" (custom)")].map(o=>`<option>${esc(o)}</option>`).join("");
+}
+$("#v-engine").onchange=fillVoices; fillVoices();
+document.querySelectorAll("[data-preview]").forEach(b=>b.onclick=()=>{$("#previewNote").hidden=false;});
+$("#v-speed").oninput=e=>$("#speedVal").textContent=(+e.target.value).toFixed(2)+"×";
+$("#vid-len").oninput=e=>{const s=+e.target.value;$("#lenVal").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");};
+$("#cv-add").onclick=()=>{
+  const n=$("#cv-name").value.trim(), f=$("#cv-file").files.length, ok=$("#cv-consent").checked, m=$("#cv-msg");
+  m.style.color="var(--loss)";
+  if(!n){m.textContent="Add a voice name.";return;}
+  if(!f){m.textContent="Choose a reference clip.";return;}
+  if(!ok){m.textContent="Confirm you have the speaker's consent.";return;}
+  custom.push(n);$("#v-engine").value="silma";fillVoices();
+  m.style.color="var(--good)";m.textContent=`Added “${n}” to the SILMA voice lists.`;
+};
+$("#adminForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  try{localStorage.setItem("dstorify-admin",JSON.stringify({engine:$("#v-engine").value,en:$("#v-en").value,ar:$("#v-ar").value}));}catch(_){}
+  $("#saveMsg").textContent="Settings saved (demo: stored in this browser only).";
+});
+try{const s=JSON.parse(localStorage.getItem("dstorify-admin")||"null");if(s){$("#v-engine").value=s.engine;fillVoices();$("#v-en").value=s.en;$("#v-ar").value=s.ar;}}catch(_){}
+
+/* plan */
+const PH=[
+  {n:"Day 1 · Foundations",s:1,e:1,g:false,items:["Repo: Next.js + FastAPI + LangGraph, SQLite","Load Industries Qatar 2026 data file and brand kit","Settings table behind Admin settings"],dw:"The quarter's data loads and validates in the dashboard."},
+  {n:"Day 1 · Script engine and editor",s:1,e:2,g:false,items:["Script graph: draft → fact-check → Arabic translation","Number placeholders filled from the data file","Script editor: edit each scene, EN and AR side by side, numbers re-validated on save"],dw:"A Q2 2026 script passes 100% number checks and can be edited."},
+  {n:"Day 1 · Voice",s:2,e:2,g:false,items:["Edge TTS for English and Qatari Arabic voices","Word timings for captions and Q&A","Voice choice per language from Admin settings"],dw:"Changing the voice in Admin changes the next narration."},
+  {n:"Day 1 · First video",s:3,e:3,g:false,items:["Remotion scenes: intro, KPI counters, trend chart, drivers, outro","Right-to-left Arabic scenes","FFmpeg mix: voice, music ducking, captions"],dw:"You watch the Q2 2026 video in English and Arabic."},
+  {n:"Day 2 · Summary and video Q&A",s:4,e:4,g:false,items:["PDF ingestion into Chroma with OpenAI embeddings","Cited executive summary, EN + AR","Q&A panel beside the player with timestamp jumps and guardrail"],dw:"Asking “why the Q2 loss?” returns a cited answer and a timestamp."},
+  {n:"Day 2 · Stock chatbot and admin",s:5,e:5,g:false,items:["Ticker list for ~55 QSE companies","yfinance / oanor tools with cache; changes computed in code","Every answer shows price, source and time; audit log"],dw:"Price questions in English or Arabic get sourced, timestamped answers."},
+  {n:"Day 2 · Test and demo",s:6,e:6,g:true,items:["Run Q1 and Q2 2026 end to end","Failure cases: price API down, missing number","Demo walkthrough"],dw:"All four modules demo end to end."}
+];
+const DAY={video:["Day 1 morning","Day 1 morning","Day 1 morning","Day 1 morning","Day 1 afternoon","Day 1 evening","Day 1 evening","Day 1 evening"],summary:Array(6).fill("Day 2 morning"),qa:Array(6).fill("Day 2 morning"),stock:Array(6).fill("Day 2 afternoon")};
+Object.entries(DAY).forEach(([k,a])=>P[k].steps.forEach((s,i)=>{s.ph=a[i]}));
+$("#gantt").innerHTML=PH.map(p=>`<div class="grow"><div class="gl">${esc(p.n.split(" · ")[1])}</div>${[1,2,3,4,5,6].map(w=>"").join("")}<div class="bar ${p.g?"gold":""}" style="grid-column:${p.s+1}/${p.e+2}"></div></div>`).join("");
+const PHASES_UNUSED=PH.map(p=>`<div class="card ph"><span class="eyebrow">${["","Day 1 AM","Day 1 PM","Day 1 evening","Day 2 AM","Day 2 PM","Day 2 evening"][p.s]}${p.e>p.s?" → "+["","Day 1 AM","Day 1 PM","Day 1 evening","Day 2 AM","Day 2 PM","Day 2 evening"][p.e]:""}</span><h3>${esc(p.n)}</h3><ul>${p.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul><div class="dw"><b>Done when:</b> ${esc(p.dw)}</div></div>`).join("");
+
+
+/* build steps */
+const BUILD = [{"n": 0, "day": "Day 1 · 30 min", "title": "Set up the machine", "goal": "Check the computer, install free tools, test voices, download sample PDFs.", "who": "You", "prompt": null, "run": "1. Unzip the pack to a folder such as C:\\dstorify-poc\n2. Double-click setup\\check_system.bat and read the report\n3. Double-click setup\\install.bat (paste your Gemini key when asked)\n4. Play outputs\\voice_test\\*.mp3 and pick your EN and AR voices", "files": ["setup/system_report.txt", ".env", "backend/.venv/", "outputs/voice_test/*.mp3", "data/documents/*.pdf"], "result": "All checks green; four voice samples (2 English, 2 Qatari Arabic); three Industries Qatar PDFs in data/documents; GEMINI_MODEL filled in .env.", "check": "Voice samples play; .env has GEMINI_API_KEY and GEMINI_MODEL."}, {"n": 1, "day": "Day 1 · morning", "title": "Scaffold the app", "goal": "Back end, front end and database skeleton running together.", "who": "Claude Code", "prompt": "Read CLAUDE.md. Do Step 1 of docs/BUILD_STEPS.md: create the FastAPI back end in backend/app (main.py with CORS for FRONTEND_URL, config.py loading .env, db.py with the SQLModel tables listed in CLAUDE.md, a /api/health route, and a static mount for /outputs). Create the Next.js app in frontend/ (TypeScript, App Router, Tailwind, shadcn/ui) with a left navigation for Dashboard, Scripts, Videos, Summary, Chat and Admin, styled with the colours in data/brand/brand.json and the logo. Add a root README with run commands for Windows. Use the existing backend/.venv. Stop when both servers run and the dashboard shows 'API connected'.", "files": ["backend/app/main.py", "backend/app/config.py", "backend/app/db.py", "frontend/app/layout.tsx", "frontend/app/page.tsx", "README.md"], "result": "http://localhost:3000 shows the D-Storify shell with navigation and a green 'API connected' badge from http://localhost:8000/api/health.", "check": "Both servers start without errors; the SQLite file appears in backend/app/store."}, {"n": 2, "day": "Day 1 · morning", "title": "Quarter data on the dashboard", "goal": "Load and validate quarter files; show the KPI picture.", "who": "Claude Code", "prompt": "Do Step 2: add services/quarters.py to load every file in data/quarters, validate it with Pydantic, and expose GET /api/quarters and GET /api/quarters/{company}/{period}. Mark derived values. On the dashboard, list companies and quarters with revenue, net profit and EPS cards (loss shown in the loss colour, 'derived' note where derived is true, 'Demo data' badge when the file's _note says DEMO). Add a 'Generate video' button per quarter (disabled for now).", "files": ["backend/app/services/quarters.py", "backend/app/api/quarters.py", "frontend/app/page.tsx", "frontend/components/QuarterCard.tsx"], "result": "Dashboard shows Q1 2026 (revenue 4,166, profit 734), H1 2026 and Q2 2026 (derived, net loss 518) with a Demo data badge.", "check": "GET /api/quarters returns the three periods; Q2 shows derived: true."}, {"n": 3, "day": "Day 1 · morning", "title": "Script graph: draft, fact-check, translate", "goal": "Generate an English + Arabic scene script with every number verified.", "who": "Claude Code", "prompt": "Do Step 3: build services/llm.py (Gemini via google-genai, model from GEMINI_MODEL, JSON output, rate limit from GEMINI_MAX_RPM, tenacity retry, SQLite cache), services/factcheck.py (fill {{placeholders}} with Python-formatted EN/AR strings, flag any digit the model typed), prompts/script.md and prompts/translate_ar.md, and graphs/video_graph.py with the nodes load_quarter -> gather_context -> draft_script -> factcheck -> translate_ar -> factcheck_ar -> human_review (LangGraph interrupt). Expose POST /api/scripts (body: company, period) which runs until human_review and stores the script JSON (schema in CLAUDE.md). Target 350-450 English words, 7 scenes, broadcast tone, honest about losses. Enable the dashboard's Generate button to call it and open /scripts/{id}.", "files": ["backend/app/services/llm.py", "backend/app/services/factcheck.py", "backend/app/prompts/script.md", "backend/app/prompts/translate_ar.md", "backend/app/graphs/video_graph.py", "backend/app/api/scripts.py"], "result": "Clicking Generate on Q2 2026 produces a 7-scene script in English and Arabic; the check report says all numbers match the data file.", "check": "Script JSON in outputs/scripts/ has checks.numbers_ok == checks.numbers_total and no stray_numbers."}, {"n": 4, "day": "Day 1 · afternoon", "title": "Script editor", "goal": "Review and edit every scene before anything is rendered.", "who": "Claude Code", "prompt": "Do Step 4: build /scripts/[id] with ScriptEditor: one card per scene showing type, English text (left) and Arabic text (right, dir=rtl, Arabic font), placeholders rendered as locked chips with their formatted value, a word count and estimated seconds per scene (150 wpm EN), and an overall length bar against target_seconds. Users can edit wording, reorder scenes, regenerate one scene (LLM call for that scene only), and Save (PUT /api/scripts/{id}) which re-runs factcheck and shows any stray numbers inline. Approve (POST /api/scripts/{id}/approve) resumes the graph past human_review.", "files": ["frontend/app/scripts/[id]/page.tsx", "frontend/components/ScriptEditor.tsx", "backend/app/api/scripts.py"], "result": "You can rewrite a sentence, see the length update, get a warning if you type a number by hand, then Approve.", "check": "Typing '600 million' into a scene shows a stray-number warning; removing it clears the warning."}, {"n": 5, "day": "Day 1 · afternoon", "title": "Voice with word timings", "goal": "Narrate approved scripts in the chosen English and Arabic voices.", "who": "Claude Code", "prompt": "Do Step 5: build services/tts/base.py (interface: synthesize(text, voice, rate) -> audio path + word timings) and services/tts/edge.py using edge-tts Communicate with boundary='WordBoundary', saving MP3 and a words JSON (offsets converted to seconds). Add the graph nodes tts_en and tts_ar after approval, one audio file per language with a short pause between scenes, and record each scene's start/end from its first/last word. Read voices from the Setting table (default from .env). Add a stub tts/silma.py that raises 'not installed'.", "files": ["backend/app/services/tts/base.py", "backend/app/services/tts/edge.py", "backend/app/services/tts/silma.py", "outputs/audio/*.mp3", "outputs/audio/*_words.json"], "result": "After Approve, outputs/audio has iqcd-q2-2026_en.mp3 (~2:30) and _ar.mp3 with word-timing files; the script page plays both.", "check": "Word timings increase monotonically and the last word ends within 1 s of the audio length."}, {"n": 6, "day": "Day 1 · evening", "title": "Remotion video templates", "goal": "Branded animated scenes driven only by the props JSON.", "who": "Claude Code", "prompt": "Do Step 6: create the Remotion project in video/ (npx create-video@latest, blank TypeScript template; pin the installed version). Build QuarterlyVideo that reads props (schema in CLAUDE.md) and plays the audio. Scenes: Intro (logo, company, quarter), KpiCards (CountUp numbers, green/red ChangeArrow), TrendChart (animated bars for net profit history, loss bars below zero in loss colour), Drivers (3-4 bullet cards from narrative_drivers), Segments (revenue share donut), Outlook, Outro (logo, 'Demo data' line when demo is true). Captions component highlights the current word from props.words. RTL mode mirrors layouts and uses IBM Plex Sans Arabic. 1920x1080, 30 fps. Add a sample props file and make `npx remotion studio` preview it.", "files": ["video/src/Root.tsx", "video/src/QuarterlyVideo.tsx", "video/src/scenes/*.tsx", "video/src/components/*.tsx", "video/src/theme/*.ts", "video/sample.props.json"], "result": "Remotion Studio previews a full branded video from the sample props in English and Arabic layouts.", "check": "Arabic scenes read right to left; the loss bar is red and below the zero line."}, {"n": 7, "day": "Day 1 · evening", "title": "One-click render and video page", "goal": "Approve a script and watch the finished videos in the app.", "who": "Claude Code", "prompt": "Do Step 7: services/render.py builds the props per language from the script, word timings and brand.json, runs `npx remotion render` in video/ via subprocess, then FFmpeg mixes the music track at MUSIC_VOLUME with sidechain ducking and makes a 15-second social cut. Add graph nodes build_props, render_en, render_ar, mix_audio; track progress per node in SQLite and stream it to the UI (polling is fine). Build /videos/[id] with an HTML5 player, EN/AR switch, captions, download links and the progress timeline. Dashboard shows finished videos.", "files": ["backend/app/services/render.py", "backend/app/api/videos.py", "frontend/app/videos/[id]/page.tsx", "frontend/components/VideoPlayer.tsx", "outputs/videos/*.mp4"], "result": "MILESTONE: the Q2 2026 video plays in English and Arabic, about 2.5 minutes each, with voice, music, captions and brand.", "check": "Changing one scene, saving and approving re-renders and the change is audible."}, {"n": 8, "day": "Day 2 · morning", "title": "Documents index and summary", "goal": "Cited executive summary from the results PDFs.", "who": "Claude Code", "prompt": "Do Step 8: services/rag.py ingests every PDF in data/documents (pypdf text per page, pdfplumber tables rendered as markdown), chunks to ~600 tokens with {file, page, section} metadata, embeds with sentence-transformers multilingual-e5-small ('passage: ' prefix) into Chroma, and searches with 'query: ' prefix plus a keyword boost. POST /api/documents/ingest, GET /api/documents. Summary: one Gemini call per section, then an executive summary EN + AR with [file p.N] citations (prompts/summary_section.md, summary_exec.md), cached. Build /summary with an Executive / Investor toggle, EN/AR tabs and clickable citations. Also switch the video graph's gather_context to use the index.", "files": ["backend/app/services/rag.py", "backend/app/api/documents.py", "backend/app/prompts/summary_*.md", "frontend/app/summary/page.tsx"], "result": "The summary page shows a one-page H1 2026 summary in English and Arabic, each point cited to a PDF page.", "check": "Clicking a citation shows the source passage; numbers match the PDF."}, {"n": 9, "day": "Day 2 · morning", "title": "Video Q&A panel", "goal": "Ask questions beside the video and jump to the answer.", "who": "Claude Code", "prompt": "Do Step 9: after rendering, index each scene's script text with its start time (metadata kind=script, video_id, lang). graphs/qa_graph.py: retrieve script chunks for this video first, then document chunks; keep top 8; Gemini answers only from them (prompts/qa.md) returning {answer, citations, timestamp}; below the score threshold answer 'not covered in this video or the documents' and log to QALog. POST /api/qa. Add QAPanel beside the player with 4 suggested questions, EN/AR input, citations, and 'Explained at m:ss' links that seek the player. Optional 'Listen' button synthesizes the answer with the current voice.", "files": ["backend/app/graphs/qa_graph.py", "backend/app/api/qa.py", "backend/app/prompts/qa.md", "frontend/components/QAPanel.tsx"], "result": "Asking 'Why was there a loss in Q2?' gives a short cited answer and a link that jumps the video to that scene.", "check": "An off-topic question returns the 'not covered' reply."}, {"n": 10, "day": "Day 2 · afternoon", "title": "Stock chatbot", "goal": "Precise, sourced answers about QSE stocks.", "who": "Claude Code", "prompt": "Do Step 10: create backend/app/data/qse_tickers.json with the QSE-listed companies (English name, Arabic name, aliases, Yahoo symbol ending .QA); verify each symbol with yfinance and drop ones that return no data. services/stock.py: get_quote, get_history(days) with a 60 s cache; all percentage changes computed in Python. graphs/stock_agent.py: Gemini tool calling to resolve the company and pick tools; search_news via ddgs for 'why' questions. The final answer copies numbers verbatim and appends 'Source: Yahoo Finance via yfinance, as of HH:MM Doha time, may be delayed'. If the tool fails, say the price can't be fetched right now. Log every answer with raw JSON. Build /chat with EN/AR support and example questions.", "files": ["backend/app/data/qse_tickers.json", "backend/app/services/stock.py", "backend/app/graphs/stock_agent.py", "backend/app/api/stock.py", "frontend/app/chat/page.tsx", "frontend/components/StockChat.tsx"], "result": "'What is Industries Qatar trading at?' returns the latest price with source and time; Arabic questions work too.", "check": "Disconnect the internet: the bot says it can't fetch the price instead of guessing."}, {"n": 11, "day": "Day 2 · afternoon", "title": "Admin settings", "goal": "Change voices, music, length and model without touching code.", "who": "Claude Code", "prompt": "Do Step 11: build /admin backed by GET/PUT /api/settings (keys in CLAUDE.md). Voice engine select, English and Arabic voice dropdowns filled from edge-tts --list-voices filtered to en-* and ar-*, a Preview button that synthesizes a test sentence, speed slider, music track upload (mp3 to data/music with a licence note field), target length, languages, captions, social cut, require review, LLM model (list from Gemini models API), Arabic digits style. Custom voice (stretch, SILMA): name + clip upload + mandatory consent checkbox. 'Import NotebookLM video': upload an MP4 and attach it to a quarter as an alternative video shown on the video page.", "files": ["backend/app/api/settings.py", "frontend/app/admin/page.tsx", "frontend/components/VoicePicker.tsx"], "result": "Switching the Arabic voice from Moaz to Amal and re-rendering changes the narration.", "check": "Settings survive a server restart (stored in SQLite)."}, {"n": 12, "day": "Day 2 · evening", "title": "Test and demo", "goal": "Run everything end to end and prepare the demo.", "who": "You + Claude Code", "prompt": "Do Step 12: write a smoke test script (backend/tests/smoke.py) that runs Q1 2026 and Q2 2026 through script generation, factcheck, TTS and render, ingests the PDFs, asks 3 Q&A questions and 3 stock questions, and prints a pass/fail table. Fix anything that fails. Then write docs/DEMO.md: a 5-minute demo walkthrough, known limits (free-tier rate limits, delayed prices, demo data), and what the paid upgrades change.", "files": ["backend/tests/smoke.py", "docs/DEMO.md"], "result": "All smoke checks pass; a 5-minute demo script is ready.", "check": "Fresh clone + install.bat + smoke.py passes on your machine."}];
+let bidx = 0;
+function renderBuild(){
+  $("#blane").innerHTML = BUILD.map((s,i)=>{
+    const cls = i<bidx?"done":i===bidx?"active":"";
+    const card = `<button class="step ${cls}" data-b="${i}" aria-current="${i===bidx?"step":"false"}">
+      <span class="num">${s.n}</span>
+      <div class="row"><h3>${esc(s.title)}</h3><span class="kind ${s.who==="You"?"":"ai"}">${esc(s.who)}</span></div>
+      <p class="what">${esc(s.day)} · ${esc(s.goal)}</p>
+      <div class="out res">${esc(s.result)}</div>
+    </button>`;
+    const arrow = i<BUILD.length-1?`<div class="arrow ${i<bidx?"lit":""}"><span>then</span></div>`:"";
+    return card+arrow;
+  }).join("");
+  $("#bcounter").textContent = `Step ${BUILD[bidx].n} of ${BUILD[BUILD.length-1].n}`;
+  $("#bprev").disabled = bidx===0;
+  $("#bnext").disabled = bidx===BUILD.length-1;
+  const s = BUILD[bidx];
+  const action = s.prompt
+    ? `<div class="prompt-head"><span class="eyebrow">Paste into Claude Code</span><button type="button" class="btn" id="copyPrompt">Copy prompt</button></div><pre class="sample" id="promptText">${esc(s.prompt)}</pre>`
+    : `<span class="eyebrow">Do this</span><pre class="sample">${esc(s.run)}</pre>`;
+  $("#bpanel").innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="eyebrow">Step ${s.n} · ${esc(s.who)}</span><span class="phase">${esc(s.day)}</span></div>
+    <h2>${esc(s.title)}</h2>
+    <p class="lead">${esc(s.goal)}</p>
+    ${action}
+    <dl class="dl" style="margin-top:14px">
+      <dt>Creates</dt><dd>${s.files.map(f=>`<span class="chip" style="display:inline-block;margin:0 4px 4px 0">${esc(f)}</span>`).join("")}</dd>
+      <dt>Check</dt><dd>${esc(s.check)}</dd>
+    </dl>
+    <div class="outcome"><b>Result you should see:</b> ${esc(s.result)}</div>`;
+  const cp = $("#copyPrompt");
+  if (cp) cp.onclick = () => {
+    const t = s.prompt;
+    const done = () => { cp.textContent = "Copied"; setTimeout(()=>cp.textContent="Copy prompt", 1500); };
+    try {
+      navigator.clipboard.writeText(t).then(done).catch(()=>selectPrompt());
+    } catch(_) { selectPrompt(); }
+    function selectPrompt(){ const r=document.createRange(); r.selectNodeContents($("#promptText")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); cp.textContent="Press Ctrl+C"; }
+  };
+}
+$("#blane").addEventListener("click",e=>{const b=e.target.closest(".step");if(!b)return;bidx=+b.dataset.b;renderBuild();});
+$("#bnext").onclick=()=>{if(bidx<BUILD.length-1){bidx++;renderBuild();}};
+$("#bprev").onclick=()=>{if(bidx>0){bidx--;renderBuild();}};
+$("#bt-res").addEventListener("change",e=>$("#view-plan").classList.toggle("hide-res",!e.target.checked));
+renderBuild();
+
+renderPicker();renderLane();setToggles();
+</script>

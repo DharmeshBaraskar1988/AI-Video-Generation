@@ -1,0 +1,57 @@
+{
+  "_note": "Extracted from uploaded documents and approved by a reviewer on 2026-10-10.",
+  "company": {
+    "exchange": "Qatar Stock Exchange",
+    "currency": "QAR",
+    "unit": "QR million",
+    "fiscal_year": "Calendar (Jan-Dec)",
+    "name_en": "QNB Group",
+    "name_ar": "بنك قطر الوطني",
+    "ticker": "QNBK"
+  },
+  "current_quarter": "Q1 2026",
+  "quarters": [
+    {
+      "period": "Q1 2026",
+      "months": "Jan-Mar 2026",
+      "derived": false,
+      "sources": [
+        "QNBK-Financials-2026-03-31-XBRL.pdf p.16",
+        "QNBK-Financials-2026-03-31-XBRL.pdf p.17",
+        "QNBK-Financials-2026-03-31-XBRL.pdf p.21"
+      ],
+      "revenue": 11883.8,
+      "net_profit": 4332.5,
+      "eps_qr": 0.44,
+      "cash_and_bank": 87352.4,
+      "comparatives": {
+        "revenue_q1_2025": 10845.7,
+        "net_profit_q1_2025": 4260.4,
+        "eps_q1_2025": 0.43
+      }
+    }
+  ],
+  "history_net_profit": [
+    {
+      "period": "Q1 2025",
+      "ytd_net_profit": 4260.4
+    }
+  ],
+  "narrative_drivers": [
+    "Operating income increased due to higher net income from financing and investment activities as well as fees and commissions.",
+    "Operating expenses increased mainly due to higher employee benefits and general administrative expenses.",
+    "Impairment gains and reversal of impairment losses improved compared to the previous year.",
+    "Net cash flows from operating activities improved significantly compared to the previous year.",
+    "Cash and cash equivalents increased slightly at the end of the period compared to the beginning."
+  ],
+  "source_documents": {
+    "doc_6": "QNBK-Financials-2026-03-31-XBRL.pdf"
+  },
+  "narrative_drivers_ar": [
+    "زاد الدخل التشغيلي بسبب ارتفاع صافي الدخل من أنشطة التمويل والاستثمار بالإضافة إلى الرسوم والعمولات.",
+    "ارتفعت المصاريف التشغيلية بشكل رئيسي بسبب زيادة مزايا الموظفين والمصاريف الإدارية العامة.",
+    "تحسنت مكاسب الانخفاض العكسي للخسائر مقارنة بالعام السابق.",
+    "تحسنت التدفقات النقدية الصافية من الأنشطة التشغيلية بشكل كبير مقارنة بالعام السابق.",
+    "زادت النقدية وما في حكمها قليلاً في نهاية الفترة مقارنة بالبداية."
+  ]
+}

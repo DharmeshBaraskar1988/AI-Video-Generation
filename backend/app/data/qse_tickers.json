@@ -1,0 +1,814 @@
+{
+ "_note": "QSE companies with Yahoo Finance symbols. Built and verified by backend/scripts/build_qse_tickers.py.",
+ "verified_at": "2026-10-10T05:31:34.143596+00:00",
+ "dropped": [],
+ "companies": [
+  {
+   "symbol": "QNBK.QA",
+   "code": "QNBK",
+   "name_en": "QNB Group",
+   "name_ar": "بنك قطر الوطني",
+   "sector": "Banks",
+   "aliases": [
+    "QNB",
+    "QNB Group",
+    "QNBK",
+    "Qatar National Bank",
+    "بنك قطر الوطني",
+    "كيو إن بي"
+   ],
+   "last_close_checked": 15.27
+  },
+  {
+   "symbol": "QIBK.QA",
+   "code": "QIBK",
+   "name_en": "Qatar Islamic Bank",
+   "name_ar": "مصرف قطر الإسلامي",
+   "sector": "Banks",
+   "aliases": [
+    "QIB",
+    "QIBK",
+    "Qatar Islamic Bank",
+    "المصرف",
+    "مصرف قطر الإسلامي"
+   ],
+   "last_close_checked": 19.98
+  },
+  {
+   "symbol": "CBQK.QA",
+   "code": "CBQK",
+   "name_en": "Commercial Bank of Qatar",
+   "name_ar": "البنك التجاري",
+   "sector": "Banks",
+   "aliases": [
+    "CBQ",
+    "CBQK",
+    "Commercial Bank",
+    "Commercial Bank of Qatar",
+    "البنك التجاري",
+    "التجاري"
+   ],
+   "last_close_checked": 3.87
+  },
+  {
+   "symbol": "MARK.QA",
+   "code": "MARK",
+   "name_en": "Masraf Al Rayan",
+   "name_ar": "مصرف الريان",
+   "sector": "Banks",
+   "aliases": [
+    "Al Rayan",
+    "MARK",
+    "Masraf Al Rayan",
+    "QIIB Rayan",
+    "الريان",
+    "مصرف الريان"
+   ],
+   "last_close_checked": 1.798
+  },
+  {
+   "symbol": "DUBK.QA",
+   "code": "DUBK",
+   "name_en": "Dukhan Bank",
+   "name_ar": "بنك دخان",
+   "sector": "Banks",
+   "aliases": [
+    "DUBK",
+    "Dukhan",
+    "Dukhan Bank",
+    "بنك دخان"
+   ],
+   "last_close_checked": 2.92
+  },
+  {
+   "symbol": "QIIK.QA",
+   "code": "QIIK",
+   "name_en": "Qatar International Islamic Bank",
+   "name_ar": "بنك قطر الدولي الإسلامي",
+   "sector": "Banks",
+   "aliases": [
+    "QIIB",
+    "QIIK",
+    "Qatar International Islamic Bank",
+    "الدولي الإسلامي",
+    "بنك قطر الدولي الإسلامي"
+   ],
+   "last_close_checked": 9.89
+  },
+  {
+   "symbol": "DHBK.QA",
+   "code": "DHBK",
+   "name_en": "Doha Bank",
+   "name_ar": "بنك الدوحة",
+   "sector": "Banks",
+   "aliases": [
+    "DHBK",
+    "Doha Bank",
+    "بنك الدوحة"
+   ],
+   "last_close_checked": 2.42
+  },
+  {
+   "symbol": "ABQK.QA",
+   "code": "ABQK",
+   "name_en": "Ahli Bank",
+   "name_ar": "البنك الأهلي",
+   "sector": "Banks",
+   "aliases": [
+    "ABQK",
+    "Ahli Bank",
+    "Al Ahli Bank",
+    "الأهلي",
+    "البنك الأهلي"
+   ],
+   "last_close_checked": 3.889
+  },
+  {
+   "symbol": "QFBQ.QA",
+   "code": "QFBQ",
+   "name_en": "Lesha Bank",
+   "name_ar": "بنك لشا",
+   "sector": "Banks",
+   "aliases": [
+    "Lesha Bank",
+    "QFB",
+    "QFBQ",
+    "Qatar First Bank",
+    "بنك لشا",
+    "لشا"
+   ],
+   "last_close_checked": 2.81
+  },
+  {
+   "symbol": "IQCD.QA",
+   "code": "IQCD",
+   "name_en": "Industries Qatar",
+   "name_ar": "صناعات قطر",
+   "sector": "Industrials",
+   "aliases": [
+    "IQ",
+    "IQCD",
+    "Industries Qatar",
+    "Industries Qatar QPSC",
+    "صناعات قطر"
+   ],
+   "last_close_checked": 9.252
+  },
+  {
+   "symbol": "QAMC.QA",
+   "code": "QAMC",
+   "name_en": "Qatar Aluminium Manufacturing",
+   "name_ar": "قطر لصناعة الألمنيوم",
+   "sector": "Industrials",
+   "aliases": [
+    "QAMC",
+    "QAMCO",
+    "Qatar Aluminium",
+    "Qatar Aluminium Manufacturing",
+    "قامكو",
+    "قطر لصناعة الألمنيوم"
+   ],
+   "last_close_checked": 1.25
+  },
+  {
+   "symbol": "MPHC.QA",
+   "code": "MPHC",
+   "name_en": "Mesaieed Petrochemical Holding",
+   "name_ar": "مسيعيد للبتروكيماويات",
+   "sector": "Industrials",
+   "aliases": [
+    "MPHC",
+    "Mesaieed",
+    "Mesaieed Petrochemical Holding",
+    "مسيعيد",
+    "مسيعيد للبتروكيماويات"
+   ],
+   "last_close_checked": 0.963
+  },
+  {
+   "symbol": "QIMD.QA",
+   "code": "QIMD",
+   "name_en": "Qatar Industrial Manufacturing",
+   "name_ar": "قطر للصناعات التحويلية",
+   "sector": "Industrials",
+   "aliases": [
+    "QIMC",
+    "QIMD",
+    "Qatar Industrial Manufacturing",
+    "قطر للصناعات التحويلية"
+   ],
+   "last_close_checked": 2.1
+  },
+  {
+   "symbol": "QNCD.QA",
+   "code": "QNCD",
+   "name_en": "Qatar National Cement",
+   "name_ar": "قطر الوطنية لصناعة الإسمنت",
+   "sector": "Industrials",
+   "aliases": [
+    "QNCC",
+    "QNCD",
+    "Qatar National Cement",
+    "الإسمنت",
+    "قطر الوطنية لصناعة الإسمنت"
+   ],
+   "last_close_checked": 2.33
+  },
+  {
+   "symbol": "QGMD.QA",
+   "code": "QGMD",
+   "name_en": "Qatar German Medical Devices",
+   "name_ar": "قطر الألمانية للمستلزمات الطبية",
+   "sector": "Industrials",
+   "aliases": [
+    "QGMD",
+    "Qatar German Medical Devices",
+    "قطر الألمانية للمستلزمات الطبية"
+   ],
+   "last_close_checked": 1.299
+  },
+  {
+   "symbol": "QEWS.QA",
+   "code": "QEWS",
+   "name_en": "Qatar Electricity & Water",
+   "name_ar": "الكهرباء والماء القطرية",
+   "sector": "Industrials",
+   "aliases": [
+    "QEWC",
+    "QEWS",
+    "Qatar Electricity & Water",
+    "Qatar Electricity and Water",
+    "الكهرباء والماء",
+    "الكهرباء والماء القطرية"
+   ],
+   "last_close_checked": 12.8
+  },
+  {
+   "symbol": "GISS.QA",
+   "code": "GISS",
+   "name_en": "Gulf International Services",
+   "name_ar": "الخليج الدولية للخدمات",
+   "sector": "Industrials",
+   "aliases": [
+    "GIS",
+    "GISS",
+    "Gulf International Services",
+    "الخليج الدولية",
+    "الخليج الدولية للخدمات"
+   ],
+   "last_close_checked": 1.57
+  },
+  {
+   "symbol": "QFLS.QA",
+   "code": "QFLS",
+   "name_en": "Qatar Fuel",
+   "name_ar": "قطر للوقود",
+   "sector": "Industrials",
+   "aliases": [
+    "QFLS",
+    "Qatar Fuel",
+    "Woqod",
+    "قطر للوقود",
+    "وقود"
+   ],
+   "last_close_checked": 11.88
+  },
+  {
+   "symbol": "AHCS.QA",
+   "code": "AHCS",
+   "name_en": "Aamal Company",
+   "name_ar": "أعمال",
+   "sector": "Industrials",
+   "aliases": [
+    "AHCS",
+    "Aamal",
+    "Aamal Company",
+    "أعمال",
+    "شركة أعمال"
+   ],
+   "last_close_checked": 0.66
+  },
+  {
+   "symbol": "IGRD.QA",
+   "code": "IGRD",
+   "name_en": "Estithmar Holding",
+   "name_ar": "استثمار القابضة",
+   "sector": "Industrials",
+   "aliases": [
+    "Estithmar",
+    "Estithmar Holding",
+    "IGRD",
+    "Investment Holding Group",
+    "استثمار",
+    "استثمار القابضة"
+   ],
+   "last_close_checked": 4.005
+  },
+  {
+   "symbol": "ORDS.QA",
+   "code": "ORDS",
+   "name_en": "Ooredoo",
+   "name_ar": "أريدُ",
+   "sector": "Telecoms",
+   "aliases": [
+    "ORDS",
+    "Ooredoo",
+    "Ooredoo Qatar",
+    "أريدُ",
+    "أوريدو",
+    "اريد"
+   ],
+   "last_close_checked": 11.58
+  },
+  {
+   "symbol": "VFQS.QA",
+   "code": "VFQS",
+   "name_en": "Vodafone Qatar",
+   "name_ar": "فودافون قطر",
+   "sector": "Telecoms",
+   "aliases": [
+    "VFQS",
+    "Vodafone",
+    "Vodafone Qatar",
+    "فودافون",
+    "فودافون قطر"
+   ],
+   "last_close_checked": 2.4
+  },
+  {
+   "symbol": "QGTS.QA",
+   "code": "QGTS",
+   "name_en": "Qatar Gas Transport (Nakilat)",
+   "name_ar": "ناقلات",
+   "sector": "Transportation",
+   "aliases": [
+    "Nakilat",
+    "QGTS",
+    "Qatar Gas Transport",
+    "Qatar Gas Transport (Nakilat)",
+    "ناقلات"
+   ],
+   "last_close_checked": 3.84
+  },
+  {
+   "symbol": "QNNS.QA",
+   "code": "QNNS",
+   "name_en": "Qatar Navigation (Milaha)",
+   "name_ar": "الملاحة القطرية",
+   "sector": "Transportation",
+   "aliases": [
+    "Milaha",
+    "QNNS",
+    "Qatar Navigation",
+    "Qatar Navigation (Milaha)",
+    "الملاحة القطرية",
+    "ملاحة"
+   ],
+   "last_close_checked": 9.37
+  },
+  {
+   "symbol": "GWCS.QA",
+   "code": "GWCS",
+   "name_en": "Gulf Warehousing",
+   "name_ar": "الخليج للمخازن",
+   "sector": "Transportation",
+   "aliases": [
+    "GWC",
+    "GWCS",
+    "Gulf Warehousing",
+    "Gulf Warehousing Company",
+    "الخليج للمخازن"
+   ],
+   "last_close_checked": 2.237
+  },
+  {
+   "symbol": "BRES.QA",
+   "code": "BRES",
+   "name_en": "Barwa Real Estate",
+   "name_ar": "بروة العقارية",
+   "sector": "Real Estate",
+   "aliases": [
+    "BRES",
+    "Barwa",
+    "Barwa Real Estate",
+    "بروة",
+    "بروة العقارية"
+   ],
+   "last_close_checked": 2.06
+  },
+  {
+   "symbol": "ERES.QA",
+   "code": "ERES",
+   "name_en": "Ezdan Holding",
+   "name_ar": "إزدان القابضة",
+   "sector": "Real Estate",
+   "aliases": [
+    "ERES",
+    "Ezdan",
+    "Ezdan Holding",
+    "إزدان",
+    "إزدان القابضة"
+   ],
+   "last_close_checked": 0.78
+  },
+  {
+   "symbol": "UDCD.QA",
+   "code": "UDCD",
+   "name_en": "United Development Company",
+   "name_ar": "المتحدة للتنمية",
+   "sector": "Real Estate",
+   "aliases": [
+    "UDC",
+    "UDCD",
+    "United Development",
+    "United Development Company",
+    "المتحدة للتنمية"
+   ],
+   "last_close_checked": 0.749
+  },
+  {
+   "symbol": "MRDS.QA",
+   "code": "MRDS",
+   "name_en": "Mazaya Real Estate",
+   "name_ar": "مزايا العقارية",
+   "sector": "Real Estate",
+   "aliases": [
+    "MRDS",
+    "Mazaya",
+    "Mazaya Real Estate",
+    "مزايا",
+    "مزايا العقارية"
+   ],
+   "last_close_checked": 0.527
+  },
+  {
+   "symbol": "QATI.QA",
+   "code": "QATI",
+   "name_en": "Qatar Insurance",
+   "name_ar": "قطر للتأمين",
+   "sector": "Insurance",
+   "aliases": [
+    "QATI",
+    "QIC",
+    "Qatar Insurance",
+    "Qatar Insurance Company",
+    "قطر للتأمين"
+   ],
+   "last_close_checked": 1.97
+  },
+  {
+   "symbol": "QGRI.QA",
+   "code": "QGRI",
+   "name_en": "Qatar General Insurance & Reinsurance",
+   "name_ar": "القطرية العامة للتأمين وإعادة التأمين",
+   "sector": "Insurance",
+   "aliases": [
+    "QGIRCO",
+    "QGRI",
+    "Qatar General Insurance & Reinsurance",
+    "القطرية العامة للتأمين وإعادة التأمين"
+   ],
+   "last_close_checked": 2.206
+  },
+  {
+   "symbol": "DOHI.QA",
+   "code": "DOHI",
+   "name_en": "Doha Insurance",
+   "name_ar": "الدوحة للتأمين",
+   "sector": "Insurance",
+   "aliases": [
+    "DOHI",
+    "Doha Insurance",
+    "Doha Insurance Group",
+    "الدوحة للتأمين"
+   ],
+   "last_close_checked": 2.859
+  },
+  {
+   "symbol": "AKHI.QA",
+   "code": "AKHI",
+   "name_en": "Al Khaleej Takaful",
+   "name_ar": "الخليج للتأمين التكافلي",
+   "sector": "Insurance",
+   "aliases": [
+    "AKHI",
+    "Al Khaleej Takaful",
+    "Al Khaleej Takaful Insurance",
+    "الخليج التكافلي",
+    "الخليج للتأمين التكافلي"
+   ],
+   "last_close_checked": 2.901
+  },
+  {
+   "symbol": "QISI.QA",
+   "code": "QISI",
+   "name_en": "Qatar Islamic Insurance",
+   "name_ar": "قطر الإسلامية للتأمين",
+   "sector": "Insurance",
+   "aliases": [
+    "QIIC",
+    "QISI",
+    "Qatar Islamic Insurance",
+    "قطر الإسلامية للتأمين"
+   ],
+   "last_close_checked": 7.105
+  },
+  {
+   "symbol": "BEMA.QA",
+   "code": "BEMA",
+   "name_en": "Damaan Islamic Insurance (Beema)",
+   "name_ar": "الضمان للتأمين الإسلامي (بيمه)",
+   "sector": "Insurance",
+   "aliases": [
+    "BEMA",
+    "Beema",
+    "Damaan",
+    "Damaan Islamic Insurance (Beema)",
+    "الضمان للتأمين الإسلامي (بيمه)",
+    "بيمه"
+   ],
+   "last_close_checked": 4.42
+  },
+  {
+   "symbol": "QLMI.QA",
+   "code": "QLMI",
+   "name_en": "QLM Life & Medical Insurance",
+   "name_ar": "كيو إل إم للتأمين على الحياة والتأمين الصحي",
+   "sector": "Insurance",
+   "aliases": [
+    "QLM",
+    "QLM Life & Medical Insurance",
+    "QLMI",
+    "كيو إل إم للتأمين على الحياة والتأمين الصحي"
+   ],
+   "last_close_checked": 1.93
+  },
+  {
+   "symbol": "MCCS.QA",
+   "code": "MCCS",
+   "name_en": "Mannai Corporation",
+   "name_ar": "مجمع شركات المناعي",
+   "sector": "Consumer",
+   "aliases": [
+    "MCCS",
+    "Mannai",
+    "Mannai Corporation",
+    "المناعي",
+    "مجمع شركات المناعي"
+   ],
+   "last_close_checked": 5.126
+  },
+  {
+   "symbol": "MERS.QA",
+   "code": "MERS",
+   "name_en": "Al Meera Consumer Goods",
+   "name_ar": "الميرة للمواد الاستهلاكية",
+   "sector": "Consumer",
+   "aliases": [
+    "Al Meera",
+    "Al Meera Consumer Goods",
+    "MERS",
+    "Meera",
+    "الميرة",
+    "الميرة للمواد الاستهلاكية"
+   ],
+   "last_close_checked": 12.74
+  },
+  {
+   "symbol": "ZHCD.QA",
+   "code": "ZHCD",
+   "name_en": "Zad Holding",
+   "name_ar": "زاد القابضة",
+   "sector": "Consumer",
+   "aliases": [
+    "ZHCD",
+    "Zad",
+    "Zad Holding",
+    "زاد",
+    "زاد القابضة"
+   ],
+   "last_close_checked": 10.04
+  },
+  {
+   "symbol": "QCFS.QA",
+   "code": "QCFS",
+   "name_en": "Qatar Cinema & Film Distribution",
+   "name_ar": "قطر للسينما وتوزيع الأفلام",
+   "sector": "Consumer",
+   "aliases": [
+    "QCFS",
+    "Qatar Cinema",
+    "Qatar Cinema & Film Distribution",
+    "قطر للسينما وتوزيع الأفلام"
+   ],
+   "last_close_checked": 2.345
+  },
+  {
+   "symbol": "WDAM.QA",
+   "code": "WDAM",
+   "name_en": "Widam Food",
+   "name_ar": "ودام الغذائية",
+   "sector": "Consumer",
+   "aliases": [
+    "WDAM",
+    "Widam",
+    "Widam Food",
+    "ودام",
+    "ودام الغذائية"
+   ],
+   "last_close_checked": 1.48
+  },
+  {
+   "symbol": "MCGS.QA",
+   "code": "MCGS",
+   "name_en": "Medicare Group",
+   "name_ar": "مجموعة الرعاية الطبية",
+   "sector": "Consumer",
+   "aliases": [
+    "MCGS",
+    "Medicare",
+    "Medicare Group",
+    "الرعاية الطبية",
+    "مجموعة الرعاية الطبية"
+   ],
+   "last_close_checked": 5.0
+  },
+  {
+   "symbol": "SIIS.QA",
+   "code": "SIIS",
+   "name_en": "Salam International Investment",
+   "name_ar": "السلام العالمية للاستثمار",
+   "sector": "Consumer",
+   "aliases": [
+    "SIIS",
+    "Salam International",
+    "Salam International Investment",
+    "السلام العالمية",
+    "السلام العالمية للاستثمار"
+   ],
+   "last_close_checked": 0.715
+  },
+  {
+   "symbol": "BLDN.QA",
+   "code": "BLDN",
+   "name_en": "Baladna",
+   "name_ar": "بلدنا",
+   "sector": "Consumer",
+   "aliases": [
+    "BLDN",
+    "Baladna",
+    "بلدنا"
+   ],
+   "last_close_checked": 1.214
+  },
+  {
+   "symbol": "FALH.QA",
+   "code": "FALH",
+   "name_en": "Al Faleh Educational Holding",
+   "name_ar": "الفالح التعليمية القابضة",
+   "sector": "Consumer",
+   "aliases": [
+    "Al Faleh",
+    "Al Faleh Educational Holding",
+    "FALH",
+    "الفالح",
+    "الفالح التعليمية القابضة"
+   ],
+   "last_close_checked": 0.523
+  },
+  {
+   "symbol": "MEZA.QA",
+   "code": "MEZA",
+   "name_en": "Meeza QSTP",
+   "name_ar": "ميزة",
+   "sector": "Consumer",
+   "aliases": [
+    "MEZA",
+    "Meeza",
+    "Meeza QSTP",
+    "ميزة",
+    "ميزة كيو إس تي بي"
+   ],
+   "last_close_checked": 3.031
+  },
+  {
+   "symbol": "QIGD.QA",
+   "code": "QIGD",
+   "name_en": "Qatari Investors Group",
+   "name_ar": "مجموعة المستثمرين القطريين",
+   "sector": "Consumer",
+   "aliases": [
+    "QIGD",
+    "Qatari Investors",
+    "Qatari Investors Group",
+    "المستثمرين القطريين",
+    "مجموعة المستثمرين القطريين"
+   ],
+   "last_close_checked": 1.84
+  },
+  {
+   "symbol": "DBIS.QA",
+   "code": "DBIS",
+   "name_en": "Dlala Brokerage & Investment Holding",
+   "name_ar": "دلالة للوساطة والاستثمار القابضة",
+   "sector": "Financial Services",
+   "aliases": [
+    "DBIS",
+    "Dlala",
+    "Dlala Brokerage & Investment Holding",
+    "دلالة",
+    "دلالة للوساطة والاستثمار القابضة"
+   ],
+   "last_close_checked": 1.73
+  },
+  {
+   "symbol": "IHGS.QA",
+   "code": "IHGS",
+   "name_en": "Inma Holding",
+   "name_ar": "إنماء القابضة",
+   "sector": "Financial Services",
+   "aliases": [
+    "IHGS",
+    "Inma",
+    "Inma Holding",
+    "إنماء",
+    "إنماء القابضة"
+   ],
+   "last_close_checked": 2.419
+  },
+  {
+   "symbol": "NLCS.QA",
+   "code": "NLCS",
+   "name_en": "Alijarah Holding",
+   "name_ar": "الإجارة القابضة",
+   "sector": "Financial Services",
+   "aliases": [
+    "Alijarah",
+    "Alijarah Holding",
+    "NLCS",
+    "National Leasing",
+    "الإجارة",
+    "الإجارة القابضة"
+   ],
+   "last_close_checked": 0.65
+  },
+  {
+   "symbol": "QOIS.QA",
+   "code": "QOIS",
+   "name_en": "Qatar Oman Investment",
+   "name_ar": "قطر وعمان للاستثمار",
+   "sector": "Financial Services",
+   "aliases": [
+    "QOIS",
+    "Qatar Oman",
+    "Qatar Oman Investment",
+    "قطر وعمان للاستثمار"
+   ],
+   "last_close_checked": 0.8
+  },
+  {
+   "symbol": "MKDM.QA",
+   "code": "MKDM",
+   "name_en": "Mekdam Holding Group",
+   "name_ar": "مقدام القابضة",
+   "sector": "Industrials",
+   "aliases": [
+    "MKDM",
+    "Mekdam",
+    "Mekdam Holding Group",
+    "مقدام",
+    "مقدام القابضة"
+   ],
+   "last_close_checked": 1.98
+  },
+  {
+   "symbol": "MHAR.QA",
+   "code": "MHAR",
+   "name_en": "Al Mahhar Holding",
+   "name_ar": "المهار القابضة",
+   "sector": "Industrials",
+   "aliases": [
+    "Al Mahhar",
+    "Al Mahhar Holding",
+    "MHAR",
+    "المهار",
+    "المهار القابضة"
+   ],
+   "last_close_checked": 2.17
+  },
+  {
+   "symbol": "TQES.QA",
+   "code": "TQES",
+   "name_en": "Techno Q",
+   "name_ar": "تكنو كيو",
+   "sector": "Industrials",
+   "aliases": [
+    "TQES",
+    "Techno Q",
+    "TechnoQ",
+    "تكنو كيو"
+   ],
+   "last_close_checked": 2.062
+  }
+ ]
+}

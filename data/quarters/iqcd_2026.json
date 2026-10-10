@@ -1,0 +1,83 @@
+{
+  "_note": "DEMO DATA for the D-Storify POC. Figures are Industries Qatar (QSE: IQCD) published results, used only as realistic sample input. Do not publish a video that presents these numbers as D-Storify's own.",
+  "company": {
+    "name_en": "Industries Qatar (demo source)",
+    "name_ar": "صناعات قطر",
+    "ticker": "IQCD",
+    "exchange": "Qatar Stock Exchange",
+    "currency": "QAR",
+    "unit": "QR million",
+    "fiscal_year": "Calendar (Jan-Dec)"
+  },
+  "current_quarter": "Q2 2026",
+  "quarters": [
+    {
+      "period": "Q1 2026",
+      "months": "Jan-Mar 2026",
+      "revenue": 4166,
+      "net_profit": 734,
+      "eps_qr": 0.12,
+      "gross_profit": 848,
+      "cash_and_bank": 8400,
+      "derived": false,
+      "comparatives": { "net_profit_q1_2025": 1000, "eps_q1_2025": 0.16 },
+      "sources": [
+        "https://www.iq.com.qa/en/investor-relations/financial-information/",
+        "https://quartr.com/companies/industries-qatar-q-p-s-c_23661"
+      ]
+    },
+    {
+      "period": "H1 2026",
+      "months": "Jan-Jun 2026",
+      "revenue": 5900,
+      "net_profit": 216,
+      "eps_qr": 0.04,
+      "cash_and_bank": 8600,
+      "derived": false,
+      "comparatives": { "net_profit_h1_2025": 2000, "net_profit_change_pct": -89 },
+      "segment_revenue_share_pct": { "petrochemicals": 25.5, "fertilisers": 38.0, "steel": 36.5 },
+      "sources": [
+        "https://www.iq.com.qa/en/media-center/press-releases-and-articles-en/industries-qatar-posts-revenue-of-qr-5-9-billion-for-the-six-month-period-ended-30-june-2026/",
+        "https://www.qatar-tribune.com/article/248550/business/iq-posts-revenue-of-qr59-bn-in-h1-2026",
+        "https://www.iq.com.qa/media/k1fm0m3u/iq-ir-presentation-h1-2026-english.pdf"
+      ]
+    },
+    {
+      "period": "Q2 2026",
+      "months": "Apr-Jun 2026",
+      "revenue": 1734,
+      "net_profit": -518,
+      "derived": true,
+      "derivation": "H1 2026 minus Q1 2026. H1 revenue is published rounded (QR 5.9bn), so Q2 revenue is approximate. The IR presentation confirms a Q2 net loss.",
+      "sources": ["computed from Q1 2026 and H1 2026 above"]
+    }
+  ],
+  "history_net_profit": [
+    { "period": "Q1 2025", "ytd_net_profit": 1000 },
+    { "period": "H1 2025", "ytd_net_profit": 2000 },
+    { "period": "9M 2025", "ytd_net_profit": 3400 },
+    { "period": "FY 2025", "ytd_net_profit": 4300 }
+  ],
+  "narrative_drivers": [
+    "Regional conflict, production cuts and shipping disruptions reduced sales volumes",
+    "Selling prices were higher across segments, partly offsetting lower volumes",
+    "Petrochemicals segment posted a net loss in H1 2026",
+    "Steel segment profit grew year on year; mothballed capacity restarted",
+    "QVC became a direct holding from 2 May 2026 (ownership 25.5% to 44.8%)",
+    "No long-term debt; FY2025 dividend of QR 2.7bn paid in H1 2026"
+  ],
+  "narrative_drivers_ar": [
+    "تراجع أحجام المبيعات بسبب النزاع الإقليمي وخفض الإنتاج واضطرابات الشحن",
+    "ارتفاع أسعار البيع في مختلف القطاعات عوّض جزئياً انخفاض الأحجام",
+    "سجّل قطاع البتروكيماويات صافي خسارة في النصف الأول من 2026",
+    "نمو أرباح قطاع الحديد والصلب على أساس سنوي مع إعادة تشغيل طاقات إنتاجية متوقفة",
+    "أصبحت QVC مساهمة مباشرة اعتباراً من 2 مايو 2026 (الملكية من 25.5% إلى 44.8%)",
+    "لا ديون طويلة الأجل؛ ودُفعت توزيعات أرباح 2025 بقيمة 2.7 مليار ريال قطري في النصف الأول من 2026"
+  ],
+  "source_documents": {
+    "h1_2026_financial_statements_pdf": "https://www.iq.com.qa/media/4zsjkey5/iq-financial-statements-h1-2026-english.pdf",
+    "q1_2026_financial_statements_pdf": "https://www.iq.com.qa/media/eyihh2yi/iq-financial-statements-march-2026-english.pdf",
+    "h1_2026_investor_presentation_pdf": "https://www.iq.com.qa/media/k1fm0m3u/iq-ir-presentation-h1-2026-english.pdf",
+    "annual_report_2025_pdf": "https://www.iq.com.qa/media/xxekyzez/qe_iq_annual-report-2025_book_20260118_eng_2nd_v6.pdf"
+  }
+}

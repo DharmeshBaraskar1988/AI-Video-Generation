@@ -1,0 +1,33 @@
+# D-Storify POC back end - Python 3.12
+# API
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+pydantic>=2.7
+python-dotenv>=1.0
+httpx>=0.27
+sqlmodel>=0.0.21
+
+# Agents + language model (Gemini free tier)
+langgraph>=0.2
+langgraph-checkpoint-sqlite>=2.0
+langchain-core>=0.3
+google-genai>=1.0
+
+# RAG: PDF reading, local embeddings, vector store
+pypdf>=4.2
+pdfplumber>=0.11
+sentence-transformers>=3.0
+chromadb>=0.5
+
+# Voice (free neural voices incl. Qatari Arabic, with word timings)
+edge-tts>=7.0
+
+# Stock data + news search
+yfinance>=0.2.40
+ddgs>=9.0
+
+# Utilities
+mutagen>=1.47
+tenacity>=8.3
+openai>=1.40

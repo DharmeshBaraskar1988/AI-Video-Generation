@@ -1,0 +1,55 @@
+{
+  "_note": "Extracted from uploaded documents and approved by a reviewer on 2026-10-10.",
+  "company": {
+    "exchange": "Qatar Stock Exchange",
+    "currency": "QAR",
+    "unit": "QR million",
+    "fiscal_year": "Calendar (Jan-Dec)",
+    "name_en": "Qatar Airways Group Q.C.S.C.",
+    "name_ar": "Qatar Airways Group",
+    "ticker": "QATARAIRWAYS"
+  },
+  "current_quarter": "FY 2026",
+  "quarters": [
+    {
+      "period": "FY 2026",
+      "months": "Jan-Dec 2026",
+      "derived": false,
+      "sources": [
+        "62720-1779272567-QR Group - Annual report 2025-26_EN-2a26d3.pdf p.15",
+        "62698-1779203702-Qatar Airways Group Q.C.S.C - English - Consolidated - March 2026-9c5f47.pdf p.6",
+        "62698-1779203702-Qatar Airways Group Q.C.S.C - English - Consolidated - March 2026-9c5f47.pdf p.8"
+      ],
+      "revenue": 83394.4,
+      "net_profit": 7074.7,
+      "cash_and_bank": 10977.8,
+      "comparatives": {
+        "revenue_fy_2025": 85643.5,
+        "net_profit_fy_2025": 7851
+      }
+    }
+  ],
+  "history_net_profit": [
+    {
+      "period": "FY 2025",
+      "ytd_net_profit": 7851
+    }
+  ],
+  "narrative_drivers": [
+    "Operating expenses decreased compared to the previous year, which supported operating profitability.",
+    "Finance costs declined significantly year-on-year.",
+    "Overall revenue saw a contraction during the fiscal year.",
+    "General and administrative expenses and income tax expenses increased, impacting bottom-line profit."
+  ],
+  "source_documents": {
+    "doc_5": "62720-1779272567-QR Group - Annual report 2025-26_EN-2a26d3.pdf",
+    "doc_3": "62698-1779203702-Qatar Airways Group Q.C.S.C - English - Consolidated - March 2026-9c5f47.pdf",
+    "doc_4": "62720-1779272567-QR Group - Annual report 2025-26_EN-2a26d3.pdf"
+  },
+  "narrative_drivers_ar": [
+    "تراجعت المصاريف التشغيلية مقارنة بالعام السابق، مما دعم الربحية التشغيلية.",
+    "انخفضت تكاليف التمويل بشكل ملحوظ على أساس سنوي.",
+    "شهد إجمالي الإيرادات تراجعاً خلال السنة المالية.",
+    "ارتفعت المصاريف الإدارية والعمومية ومصروفات ضريبة الدخل، مما أثر على صافي الأرباح."
+  ]
+}

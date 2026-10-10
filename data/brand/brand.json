@@ -1,0 +1,21 @@
+{
+  "name": "QSE",
+  "tagline_en": "Quarterly results, told well",
+  "tagline_ar": "النتائج الفصلية، بوضوح",
+  "logo": "data/brand/logo.svg",
+  "colors": {
+    "primary": "#0F3D3E",
+    "accent": "#E3B23C",
+    "secondary": "#8A1538",
+    "background": "#F4F7F6",
+    "ink": "#13201F",
+    "gain": "#1E7A4F",
+    "loss": "#A3243B"
+  },
+  "fonts": {
+    "en": "Inter",
+    "ar": "IBM Plex Sans Arabic",
+    "numbers": "Inter (tabular figures)"
+  },
+  "placeholder": true
+}

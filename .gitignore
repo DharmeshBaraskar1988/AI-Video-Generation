@@ -1,0 +1,12 @@
+.env
+backend/.venv/
+backend/app/store/
+outputs/
+node_modules/
+frontend/.next/
+video/out/
+__pycache__/
+*.pyc
+setup/system_report.txt
+data/documents/*.pdf
+data/voices/

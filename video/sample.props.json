@@ -1,0 +1,2217 @@
+{
+ "language": "en",
+ "direction": "ltr",
+ "digits": "western",
+ "brand": {
+  "name": "D-Storify",
+  "tagline_en": "Quarterly results, told well",
+  "tagline_ar": "النتائج الفصلية، بوضوح",
+  "logo": "data/brand/logo.svg",
+  "colors": {
+   "primary": "#0F3D3E",
+   "accent": "#E3B23C",
+   "secondary": "#8A1538",
+   "background": "#F4F7F6",
+   "ink": "#13201F",
+   "gain": "#1E7A4F",
+   "loss": "#A3243B"
+  },
+  "fonts": {
+   "en": "Inter",
+   "ar": "IBM Plex Sans Arabic",
+   "numbers": "Inter (tabular figures)"
+  },
+  "placeholder": true
+ },
+ "audio": "sample/en.mp3",
+ "durationSeconds": 185.34,
+ "scenes": [
+  {
+   "id": "s1",
+   "type": "intro",
+   "start": 0.1,
+   "end": 16.462,
+   "audioStart": 0.0,
+   "text": "Welcome to this financial update for Industries Qatar. In the second quarter of 2026, the industrial conglomerate faced a challenging operating environment. Revenue fell sharply and the group swung into the red amid lower sales volumes and regional shipping disruptions.",
+   "data": {
+    "kicker": "Quarterly results",
+    "company": "Industries Qatar",
+    "period": "Q2 2026"
+   }
+  },
+  {
+   "id": "s2",
+   "type": "kpis",
+   "start": 18.028,
+   "end": 44.841,
+   "audioStart": 17.928,
+   "text": "During the second quarter of 2026, revenue stood at QR 1.7 billion, which was down 58 percent compared to the first quarter of 2026. Industries Qatar posted a net loss of QR 518 million. In the first quarter of 2026, the company generated QR 4.2 billion in revenue, recorded a net profit of QR 734 million, and delivered earnings per share of QR 0.12.",
+   "data": {
+    "cards": [
+     {
+      "key": "revenue",
+      "label": "Revenue",
+      "number": 1.7,
+      "decimals": 1,
+      "prefix": "QR ",
+      "suffix": " billion",
+      "text": "QR 1.7 billion",
+      "tone": "neutral",
+      "derived": true,
+      "change": {
+       "text": "58%",
+       "direction": "down",
+       "basis": "vs previous quarter"
+      }
+     },
+     {
+      "key": "net_result",
+      "label": "Net loss",
+      "number": 518.0,
+      "decimals": 0,
+      "prefix": "QR ",
+      "suffix": " million",
+      "text": "QR 518 million",
+      "tone": "loss",
+      "derived": true,
+      "change": null
+     }
+    ],
+    "title": "Headline figures"
+   }
+  },
+  {
+   "id": "s3",
+   "type": "trend",
+   "start": 46.444,
+   "end": 79.107,
+   "audioStart": 46.344,
+   "text": "Looking at the broader trend, performance across the first half of 2026 shows a marked deceleration. For the first half of 2026, revenue reached QR 5.9 billion, while the group recorded a net profit of QR 216 million, yielding earnings per share of QR 0.04. Net profit was down 89 percent compared to the first half of 2025, when Industries Qatar posted a net profit of QR 2 billion. Over the full year 2025, the group recorded a net profit of QR 4.3 billion.",
+   "data": {
+    "bars": [
+     {
+      "label": "Q1",
+      "sublabel": "2025",
+      "value": 1000.0,
+      "text": "1,000",
+      "derived": false,
+      "highlight": false
+     },
+     {
+      "label": "Q2",
+      "sublabel": "2025",
+      "value": 1000.0,
+      "text": "1,000",
+      "derived": true,
+      "highlight": false
+     },
+     {
+      "label": "Q3",
+      "sublabel": "2025",
+      "value": 1400.0,
+      "text": "1,400",
+      "derived": true,
+      "highlight": false
+     },
+     {
+      "label": "Q4",
+      "sublabel": "2025",
+      "value": 900.0,
+      "text": "900",
+      "derived": true,
+      "highlight": false
+     },
+     {
+      "label": "Q1",
+      "sublabel": "2026",
+      "value": 734.0,
+      "text": "734",
+      "derived": false,
+      "highlight": false
+     },
+     {
+      "label": "Q2",
+      "sublabel": "2026",
+      "value": -518.0,
+      "text": "loss 518",
+      "derived": true,
+      "highlight": true
+     }
+    ],
+    "unit": "QR million",
+    "note": "Derived from published year-to-date figures, not reported",
+    "title": "Net profit by quarter"
+   }
+  },
+  {
+   "id": "s4",
+   "type": "drivers",
+   "start": 80.692,
+   "end": 114.042,
+   "audioStart": 80.592,
+   "text": "Several key factors shaped performance during the first half of 2026. Regional conflict, production cuts, and shipping disruptions reduced overall sales volumes. Higher selling prices across core segments partly offset these volume declines. Segment results diverged significantly. Petrochemicals posted a net loss due to weaker margins. Conversely, the steel segment grew profit year on year as mothballed capacity successfully restarted. In addition, QVC became a direct holding during the period.",
+   "data": {
+    "items": [
+     "Regional conflict, production cuts and shipping disruptions reduced sales volumes",
+     "Selling prices were higher across segments, partly offsetting lower volumes",
+     "Petrochemicals segment posted a net loss in H1 2026",
+     "Steel segment profit grew year on year; mothballed capacity restarted"
+    ],
+    "title": "What drove the results"
+   }
+  },
+  {
+   "id": "s5",
+   "type": "segments",
+   "start": 115.636,
+   "end": 142.823,
+   "audioStart": 115.536,
+   "text": "Examining the revenue mix during the first half of 2026, operations remained well diversified across core industrial segments. Fertilisers represented the largest share, contributing 38 percent of total revenue. Steel accounted for 36.5 percent of turnover, while petrochemicals generated 25.5 percent. Together, fertilisers and steel provided crucial stability while petrochemical operations faced headwinds.",
+   "data": {
+    "slices": [
+     {
+      "label": "Fertilisers",
+      "value": 38.0,
+      "text": "38%"
+     },
+     {
+      "label": "Steel",
+      "value": 36.5,
+      "text": "36.5%"
+     },
+     {
+      "label": "Petrochemicals",
+      "value": 25.5,
+      "text": "25.5%"
+     }
+    ],
+    "period": "H1 2026",
+    "title": "Revenue by segment"
+   }
+  },
+  {
+   "id": "s6",
+   "type": "outlook",
+   "start": 144.412,
+   "end": 174.225,
+   "audioStart": 144.312,
+   "text": "Despite quarterly challenges, Industries Qatar maintains a solid financial position. The company carries no long-term debt, and liquidity remains strong. Cash and bank balances stood at QR 8.6 billion at the end of the first half of 2026, compared to QR 8.4 billion at the close of the first quarter of 2026. The group also completed its scheduled dividend distribution. Looking ahead, market watchers will track export logistics and commodity price movements.",
+   "data": {
+    "stats": [
+     {
+      "label": "Cash and bank balances",
+      "when": "H1 2026",
+      "text": "QR 8.6 billion",
+      "derived": false
+     },
+     {
+      "label": "Cash and bank balances",
+      "when": "Q1 2026",
+      "text": "QR 8.4 billion",
+      "derived": false
+     }
+    ],
+    "title": "Financial position"
+   }
+  },
+  {
+   "id": "s7",
+   "type": "outro",
+   "start": 175.804,
+   "end": 182.954,
+   "audioStart": 175.704,
+   "text": "That concludes our quarterly review of Industries Qatar for the second quarter of 2026. Thank you for watching.",
+   "data": {
+    "company": "Industries Qatar",
+    "tagline": "Quarterly results, told well",
+    "demoNote": "Demo data: Industries Qatar's published results used as sample input."
+   }
+  }
+ ],
+ "words": [
+  {
+   "text": "Welcome",
+   "start": 0.1,
+   "end": 0.512
+  },
+  {
+   "text": "to",
+   "start": 0.537,
+   "end": 0.637
+  },
+  {
+   "text": "this",
+   "start": 0.662,
+   "end": 0.85
+  },
+  {
+   "text": "financial",
+   "start": 0.875,
+   "end": 1.413
+  },
+  {
+   "text": "update",
+   "start": 1.438,
+   "end": 1.75
+  },
+  {
+   "text": "for",
+   "start": 1.775,
+   "end": 1.938
+  },
+  {
+   "text": "Industries",
+   "start": 1.962,
+   "end": 2.45
+  },
+  {
+   "text": "Qatar",
+   "start": 2.475,
+   "end": 3.025
+  },
+  {
+   "text": "In",
+   "start": 3.913,
+   "end": 4.075
+  },
+  {
+   "text": "the",
+   "start": 4.1,
+   "end": 4.2
+  },
+  {
+   "text": "second",
+   "start": 4.225,
+   "end": 4.587
+  },
+  {
+   "text": "quarter",
+   "start": 4.6,
+   "end": 4.975
+  },
+  {
+   "text": "of",
+   "start": 4.987,
+   "end": 5.087
+  },
+  {
+   "text": "2026",
+   "start": 5.112,
+   "end": 6.175
+  },
+  {
+   "text": "the",
+   "start": 6.4,
+   "end": 6.5
+  },
+  {
+   "text": "industrial",
+   "start": 6.525,
+   "end": 7.175
+  },
+  {
+   "text": "conglomerate",
+   "start": 7.188,
+   "end": 7.8
+  },
+  {
+   "text": "faced",
+   "start": 7.825,
+   "end": 8.125
+  },
+  {
+   "text": "a",
+   "start": 8.15,
+   "end": 8.213
+  },
+  {
+   "text": "challenging",
+   "start": 8.238,
+   "end": 8.812
+  },
+  {
+   "text": "operating",
+   "start": 8.825,
+   "end": 9.387
+  },
+  {
+   "text": "environment",
+   "start": 9.4,
+   "end": 10.1
+  },
+  {
+   "text": "Revenue",
+   "start": 10.975,
+   "end": 11.425
+  },
+  {
+   "text": "fell",
+   "start": 11.45,
+   "end": 11.65
+  },
+  {
+   "text": "sharply",
+   "start": 11.675,
+   "end": 12.113
+  },
+  {
+   "text": "and",
+   "start": 12.137,
+   "end": 12.212
+  },
+  {
+   "text": "the",
+   "start": 12.238,
+   "end": 12.338
+  },
+  {
+   "text": "group",
+   "start": 12.35,
+   "end": 12.6
+  },
+  {
+   "text": "swung",
+   "start": 12.625,
+   "end": 12.925
+  },
+  {
+   "text": "into",
+   "start": 12.95,
+   "end": 13.1
+  },
+  {
+   "text": "the",
+   "start": 13.125,
+   "end": 13.238
+  },
+  {
+   "text": "red",
+   "start": 13.25,
+   "end": 13.45
+  },
+  {
+   "text": "amid",
+   "start": 13.475,
+   "end": 13.7
+  },
+  {
+   "text": "lower",
+   "start": 13.725,
+   "end": 14.0
+  },
+  {
+   "text": "sales",
+   "start": 14.025,
+   "end": 14.363
+  },
+  {
+   "text": "volumes",
+   "start": 14.387,
+   "end": 14.837
+  },
+  {
+   "text": "and",
+   "start": 14.863,
+   "end": 15.0
+  },
+  {
+   "text": "regional",
+   "start": 15.025,
+   "end": 15.388
+  },
+  {
+   "text": "shipping",
+   "start": 15.4,
+   "end": 15.738
+  },
+  {
+   "text": "disruptions",
+   "start": 15.762,
+   "end": 16.462
+  },
+  {
+   "text": "During",
+   "start": 18.028,
+   "end": 18.278
+  },
+  {
+   "text": "the",
+   "start": 18.303,
+   "end": 18.403
+  },
+  {
+   "text": "second",
+   "start": 18.428,
+   "end": 18.791
+  },
+  {
+   "text": "quarter",
+   "start": 18.803,
+   "end": 19.166
+  },
+  {
+   "text": "of",
+   "start": 19.178,
+   "end": 19.278
+  },
+  {
+   "text": "2026",
+   "start": 19.303,
+   "end": 20.29
+  },
+  {
+   "text": "revenue",
+   "start": 20.528,
+   "end": 20.903
+  },
+  {
+   "text": "stood",
+   "start": 20.928,
+   "end": 21.165
+  },
+  {
+   "text": "at",
+   "start": 21.191,
+   "end": 21.278
+  },
+  {
+   "text": "QR",
+   "start": 21.303,
+   "end": 21.678
+  },
+  {
+   "text": "1.7",
+   "start": 21.703,
+   "end": 22.478
+  },
+  {
+   "text": "billion",
+   "start": 22.503,
+   "end": 22.878
+  },
+  {
+   "text": "which",
+   "start": 23.128,
+   "end": 23.303
+  },
+  {
+   "text": "was",
+   "start": 23.316,
+   "end": 23.453
+  },
+  {
+   "text": "down",
+   "start": 23.478,
+   "end": 23.691
+  },
+  {
+   "text": "58 percent",
+   "start": 23.715,
+   "end": 24.653
+  },
+  {
+   "text": "compared",
+   "start": 24.678,
+   "end": 25.066
+  },
+  {
+   "text": "to",
+   "start": 25.09,
+   "end": 25.165
+  },
+  {
+   "text": "the",
+   "start": 25.178,
+   "end": 25.29
+  },
+  {
+   "text": "first",
+   "start": 25.303,
+   "end": 25.603
+  },
+  {
+   "text": "quarter",
+   "start": 25.628,
+   "end": 25.99
+  },
+  {
+   "text": "of",
+   "start": 26.003,
+   "end": 26.078
+  },
+  {
+   "text": "2026",
+   "start": 26.103,
+   "end": 27.178
+  },
+  {
+   "text": "Industries",
+   "start": 28.065,
+   "end": 28.64
+  },
+  {
+   "text": "Qatar",
+   "start": 28.666,
+   "end": 29.078
+  },
+  {
+   "text": "posted",
+   "start": 29.09,
+   "end": 29.453
+  },
+  {
+   "text": "a",
+   "start": 29.478,
+   "end": 29.516
+  },
+  {
+   "text": "net",
+   "start": 29.541,
+   "end": 29.766
+  },
+  {
+   "text": "loss",
+   "start": 29.791,
+   "end": 30.078
+  },
+  {
+   "text": "of",
+   "start": 30.103,
+   "end": 30.191
+  },
+  {
+   "text": "QR",
+   "start": 30.215,
+   "end": 30.616
+  },
+  {
+   "text": "518",
+   "start": 30.641,
+   "end": 31.628
+  },
+  {
+   "text": "million",
+   "start": 31.641,
+   "end": 32.066
+  },
+  {
+   "text": "In",
+   "start": 32.953,
+   "end": 33.103
+  },
+  {
+   "text": "the",
+   "start": 33.116,
+   "end": 33.203
+  },
+  {
+   "text": "first",
+   "start": 33.228,
+   "end": 33.503
+  },
+  {
+   "text": "quarter",
+   "start": 33.528,
+   "end": 33.853
+  },
+  {
+   "text": "of",
+   "start": 33.866,
+   "end": 33.953
+  },
+  {
+   "text": "2026",
+   "start": 33.978,
+   "end": 34.953
+  },
+  {
+   "text": "the",
+   "start": 35.153,
+   "end": 35.278
+  },
+  {
+   "text": "company",
+   "start": 35.303,
+   "end": 35.666
+  },
+  {
+   "text": "generated",
+   "start": 35.69,
+   "end": 36.24
+  },
+  {
+   "text": "QR",
+   "start": 36.265,
+   "end": 36.628
+  },
+  {
+   "text": "4.2",
+   "start": 36.653,
+   "end": 37.303
+  },
+  {
+   "text": "billion",
+   "start": 37.328,
+   "end": 37.653
+  },
+  {
+   "text": "in",
+   "start": 37.666,
+   "end": 37.778
+  },
+  {
+   "text": "revenue",
+   "start": 37.803,
+   "end": 38.203
+  },
+  {
+   "text": "recorded",
+   "start": 38.466,
+   "end": 38.878
+  },
+  {
+   "text": "a",
+   "start": 38.903,
+   "end": 38.941
+  },
+  {
+   "text": "net",
+   "start": 38.966,
+   "end": 39.166
+  },
+  {
+   "text": "profit",
+   "start": 39.178,
+   "end": 39.541
+  },
+  {
+   "text": "of",
+   "start": 39.565,
+   "end": 39.666
+  },
+  {
+   "text": "QR",
+   "start": 39.678,
+   "end": 40.041
+  },
+  {
+   "text": "734",
+   "start": 40.065,
+   "end": 41.178
+  },
+  {
+   "text": "million",
+   "start": 41.19,
+   "end": 41.59
+  },
+  {
+   "text": "and",
+   "start": 41.866,
+   "end": 41.953
+  },
+  {
+   "text": "delivered",
+   "start": 41.978,
+   "end": 42.403
+  },
+  {
+   "text": "earnings",
+   "start": 42.416,
+   "end": 42.74
+  },
+  {
+   "text": "per",
+   "start": 42.765,
+   "end": 42.915
+  },
+  {
+   "text": "share",
+   "start": 42.94,
+   "end": 43.203
+  },
+  {
+   "text": "of",
+   "start": 43.216,
+   "end": 43.303
+  },
+  {
+   "text": "QR",
+   "start": 43.328,
+   "end": 43.69
+  },
+  {
+   "text": "0.12",
+   "start": 43.716,
+   "end": 44.841
+  },
+  {
+   "text": "Looking",
+   "start": 46.444,
+   "end": 46.794
+  },
+  {
+   "text": "at",
+   "start": 46.819,
+   "end": 46.894
+  },
+  {
+   "text": "the",
+   "start": 46.919,
+   "end": 47.032
+  },
+  {
+   "text": "broader",
+   "start": 47.057,
+   "end": 47.394
+  },
+  {
+   "text": "trend",
+   "start": 47.419,
+   "end": 47.782
+  },
+  {
+   "text": "performance",
+   "start": 47.944,
+   "end": 48.507
+  },
+  {
+   "text": "across",
+   "start": 48.532,
+   "end": 48.869
+  },
+  {
+   "text": "the",
+   "start": 48.894,
+   "end": 49.006
+  },
+  {
+   "text": "first",
+   "start": 49.019,
+   "end": 49.306
+  },
+  {
+   "text": "half",
+   "start": 49.331,
+   "end": 49.581
+  },
+  {
+   "text": "of",
+   "start": 49.607,
+   "end": 49.719
+  },
+  {
+   "text": "2026",
+   "start": 49.744,
+   "end": 50.682
+  },
+  {
+   "text": "shows",
+   "start": 50.706,
+   "end": 50.931
+  },
+  {
+   "text": "a",
+   "start": 50.956,
+   "end": 51.006
+  },
+  {
+   "text": "marked",
+   "start": 51.019,
+   "end": 51.282
+  },
+  {
+   "text": "deceleration",
+   "start": 51.307,
+   "end": 52.107
+  },
+  {
+   "text": "For",
+   "start": 52.994,
+   "end": 53.144
+  },
+  {
+   "text": "the",
+   "start": 53.156,
+   "end": 53.244
+  },
+  {
+   "text": "first",
+   "start": 53.269,
+   "end": 53.544
+  },
+  {
+   "text": "half",
+   "start": 53.569,
+   "end": 53.782
+  },
+  {
+   "text": "of",
+   "start": 53.794,
+   "end": 53.894
+  },
+  {
+   "text": "2026",
+   "start": 53.919,
+   "end": 54.906
+  },
+  {
+   "text": "revenue",
+   "start": 55.144,
+   "end": 55.544
+  },
+  {
+   "text": "reached",
+   "start": 55.557,
+   "end": 55.807
+  },
+  {
+   "text": "QR",
+   "start": 55.832,
+   "end": 56.169
+  },
+  {
+   "text": "5.9",
+   "start": 56.194,
+   "end": 56.932
+  },
+  {
+   "text": "billion",
+   "start": 56.944,
+   "end": 57.307
+  },
+  {
+   "text": "while",
+   "start": 57.532,
+   "end": 57.669
+  },
+  {
+   "text": "the",
+   "start": 57.682,
+   "end": 57.782
+  },
+  {
+   "text": "group",
+   "start": 57.807,
+   "end": 58.019
+  },
+  {
+   "text": "recorded",
+   "start": 58.032,
+   "end": 58.457
+  },
+  {
+   "text": "a",
+   "start": 58.481,
+   "end": 58.519
+  },
+  {
+   "text": "net",
+   "start": 58.544,
+   "end": 58.744
+  },
+  {
+   "text": "profit",
+   "start": 58.756,
+   "end": 59.119
+  },
+  {
+   "text": "of",
+   "start": 59.144,
+   "end": 59.244
+  },
+  {
+   "text": "QR",
+   "start": 59.269,
+   "end": 59.619
+  },
+  {
+   "text": "216",
+   "start": 59.644,
+   "end": 60.594
+  },
+  {
+   "text": "million",
+   "start": 60.606,
+   "end": 60.981
+  },
+  {
+   "text": "yielding",
+   "start": 61.182,
+   "end": 61.532
+  },
+  {
+   "text": "earnings",
+   "start": 61.557,
+   "end": 61.869
+  },
+  {
+   "text": "per",
+   "start": 61.894,
+   "end": 62.044
+  },
+  {
+   "text": "share",
+   "start": 62.069,
+   "end": 62.331
+  },
+  {
+   "text": "of",
+   "start": 62.344,
+   "end": 62.431
+  },
+  {
+   "text": "QR",
+   "start": 62.457,
+   "end": 62.844
+  },
+  {
+   "text": "0.04",
+   "start": 62.869,
+   "end": 64.131
+  },
+  {
+   "text": "Net",
+   "start": 65.019,
+   "end": 65.269
+  },
+  {
+   "text": "profit",
+   "start": 65.282,
+   "end": 65.681
+  },
+  {
+   "text": "was",
+   "start": 65.707,
+   "end": 65.856
+  },
+  {
+   "text": "down",
+   "start": 65.882,
+   "end": 66.119
+  },
+  {
+   "text": "89 percent",
+   "start": 66.132,
+   "end": 66.982
+  },
+  {
+   "text": "compared",
+   "start": 67.007,
+   "end": 67.394
+  },
+  {
+   "text": "to",
+   "start": 67.419,
+   "end": 67.494
+  },
+  {
+   "text": "the",
+   "start": 67.507,
+   "end": 67.619
+  },
+  {
+   "text": "first",
+   "start": 67.632,
+   "end": 67.919
+  },
+  {
+   "text": "half",
+   "start": 67.944,
+   "end": 68.182
+  },
+  {
+   "text": "of",
+   "start": 68.207,
+   "end": 68.307
+  },
+  {
+   "text": "2025",
+   "start": 68.332,
+   "end": 69.332
+  },
+  {
+   "text": "when",
+   "start": 69.619,
+   "end": 69.782
+  },
+  {
+   "text": "Industries",
+   "start": 69.794,
+   "end": 70.269
+  },
+  {
+   "text": "Qatar",
+   "start": 70.294,
+   "end": 70.656
+  },
+  {
+   "text": "posted",
+   "start": 70.669,
+   "end": 71.019
+  },
+  {
+   "text": "a",
+   "start": 71.044,
+   "end": 71.082
+  },
+  {
+   "text": "net",
+   "start": 71.106,
+   "end": 71.319
+  },
+  {
+   "text": "profit",
+   "start": 71.332,
+   "end": 71.694
+  },
+  {
+   "text": "of",
+   "start": 71.719,
+   "end": 71.819
+  },
+  {
+   "text": "QR",
+   "start": 71.844,
+   "end": 72.194
+  },
+  {
+   "text": "2",
+   "start": 72.219,
+   "end": 72.394
+  },
+  {
+   "text": "billion",
+   "start": 72.419,
+   "end": 72.844
+  },
+  {
+   "text": "Over",
+   "start": 73.731,
+   "end": 74.006
+  },
+  {
+   "text": "the",
+   "start": 74.019,
+   "end": 74.119
+  },
+  {
+   "text": "full",
+   "start": 74.132,
+   "end": 74.344
+  },
+  {
+   "text": "year",
+   "start": 74.369,
+   "end": 74.544
+  },
+  {
+   "text": "2025",
+   "start": 74.556,
+   "end": 75.556
+  },
+  {
+   "text": "the",
+   "start": 75.769,
+   "end": 75.869
+  },
+  {
+   "text": "group",
+   "start": 75.894,
+   "end": 76.132
+  },
+  {
+   "text": "recorded",
+   "start": 76.156,
+   "end": 76.594
+  },
+  {
+   "text": "a",
+   "start": 76.619,
+   "end": 76.656
+  },
+  {
+   "text": "net",
+   "start": 76.681,
+   "end": 76.894
+  },
+  {
+   "text": "profit",
+   "start": 76.906,
+   "end": 77.306
+  },
+  {
+   "text": "of",
+   "start": 77.332,
+   "end": 77.432
+  },
+  {
+   "text": "QR",
+   "start": 77.457,
+   "end": 77.882
+  },
+  {
+   "text": "4.3",
+   "start": 77.906,
+   "end": 78.632
+  },
+  {
+   "text": "billion",
+   "start": 78.656,
+   "end": 79.107
+  },
+  {
+   "text": "Several",
+   "start": 80.692,
+   "end": 81.129
+  },
+  {
+   "text": "key",
+   "start": 81.154,
+   "end": 81.317
+  },
+  {
+   "text": "factors",
+   "start": 81.33,
+   "end": 81.78
+  },
+  {
+   "text": "shaped",
+   "start": 81.792,
+   "end": 82.054
+  },
+  {
+   "text": "performance",
+   "start": 82.08,
+   "end": 82.642
+  },
+  {
+   "text": "during",
+   "start": 82.654,
+   "end": 82.892
+  },
+  {
+   "text": "the",
+   "start": 82.917,
+   "end": 83.017
+  },
+  {
+   "text": "first",
+   "start": 83.03,
+   "end": 83.329
+  },
+  {
+   "text": "half",
+   "start": 83.342,
+   "end": 83.605
+  },
+  {
+   "text": "of",
+   "start": 83.63,
+   "end": 83.742
+  },
+  {
+   "text": "2026",
+   "start": 83.767,
+   "end": 84.892
+  },
+  {
+   "text": "Regional",
+   "start": 85.78,
+   "end": 86.242
+  },
+  {
+   "text": "conflict",
+   "start": 86.267,
+   "end": 86.817
+  },
+  {
+   "text": "production",
+   "start": 86.942,
+   "end": 87.442
+  },
+  {
+   "text": "cuts",
+   "start": 87.467,
+   "end": 87.754
+  },
+  {
+   "text": "and",
+   "start": 87.917,
+   "end": 88.055
+  },
+  {
+   "text": "shipping",
+   "start": 88.079,
+   "end": 88.429
+  },
+  {
+   "text": "disruptions",
+   "start": 88.454,
+   "end": 89.03
+  },
+  {
+   "text": "reduced",
+   "start": 89.055,
+   "end": 89.43
+  },
+  {
+   "text": "overall",
+   "start": 89.442,
+   "end": 89.805
+  },
+  {
+   "text": "sales",
+   "start": 89.83,
+   "end": 90.154
+  },
+  {
+   "text": "volumes",
+   "start": 90.18,
+   "end": 90.742
+  },
+  {
+   "text": "Higher",
+   "start": 91.617,
+   "end": 91.942
+  },
+  {
+   "text": "selling",
+   "start": 91.967,
+   "end": 92.292
+  },
+  {
+   "text": "prices",
+   "start": 92.317,
+   "end": 92.742
+  },
+  {
+   "text": "across",
+   "start": 92.767,
+   "end": 93.105
+  },
+  {
+   "text": "core",
+   "start": 93.129,
+   "end": 93.342
+  },
+  {
+   "text": "segments",
+   "start": 93.367,
+   "end": 93.805
+  },
+  {
+   "text": "partly",
+   "start": 93.83,
+   "end": 94.23
+  },
+  {
+   "text": "offset",
+   "start": 94.254,
+   "end": 94.629
+  },
+  {
+   "text": "these",
+   "start": 94.654,
+   "end": 94.842
+  },
+  {
+   "text": "volume",
+   "start": 94.867,
+   "end": 95.205
+  },
+  {
+   "text": "declines",
+   "start": 95.229,
+   "end": 95.879
+  },
+  {
+   "text": "Segment",
+   "start": 96.755,
+   "end": 97.317
+  },
+  {
+   "text": "results",
+   "start": 97.342,
+   "end": 97.842
+  },
+  {
+   "text": "diverged",
+   "start": 97.854,
+   "end": 98.392
+  },
+  {
+   "text": "significantly",
+   "start": 98.417,
+   "end": 99.33
+  },
+  {
+   "text": "Petrochemicals",
+   "start": 100.205,
+   "end": 101.104
+  },
+  {
+   "text": "posted",
+   "start": 101.13,
+   "end": 101.517
+  },
+  {
+   "text": "a",
+   "start": 101.542,
+   "end": 101.58
+  },
+  {
+   "text": "net",
+   "start": 101.604,
+   "end": 101.83
+  },
+  {
+   "text": "loss",
+   "start": 101.854,
+   "end": 102.167
+  },
+  {
+   "text": "due",
+   "start": 102.192,
+   "end": 102.33
+  },
+  {
+   "text": "to",
+   "start": 102.342,
+   "end": 102.442
+  },
+  {
+   "text": "weaker",
+   "start": 102.467,
+   "end": 102.78
+  },
+  {
+   "text": "margins",
+   "start": 102.792,
+   "end": 103.354
+  },
+  {
+   "text": "Conversely",
+   "start": 104.229,
+   "end": 104.842
+  },
+  {
+   "text": "the",
+   "start": 104.967,
+   "end": 105.08
+  },
+  {
+   "text": "steel",
+   "start": 105.104,
+   "end": 105.392
+  },
+  {
+   "text": "segment",
+   "start": 105.417,
+   "end": 105.792
+  },
+  {
+   "text": "grew",
+   "start": 105.804,
+   "end": 105.979
+  },
+  {
+   "text": "profit",
+   "start": 106.005,
+   "end": 106.38
+  },
+  {
+   "text": "year",
+   "start": 106.404,
+   "end": 106.604
+  },
+  {
+   "text": "on",
+   "start": 106.63,
+   "end": 106.755
+  },
+  {
+   "text": "year",
+   "start": 106.78,
+   "end": 107.005
+  },
+  {
+   "text": "as",
+   "start": 107.017,
+   "end": 107.13
+  },
+  {
+   "text": "mothballed",
+   "start": 107.154,
+   "end": 107.642
+  },
+  {
+   "text": "capacity",
+   "start": 107.667,
+   "end": 108.267
+  },
+  {
+   "text": "successfully",
+   "start": 108.292,
+   "end": 108.967
+  },
+  {
+   "text": "restarted",
+   "start": 108.979,
+   "end": 109.592
+  },
+  {
+   "text": "In",
+   "start": 110.467,
+   "end": 110.654
+  },
+  {
+   "text": "addition",
+   "start": 110.679,
+   "end": 111.117
+  },
+  {
+   "text": "QVC",
+   "start": 111.317,
+   "end": 111.88
+  },
+  {
+   "text": "became",
+   "start": 111.904,
+   "end": 112.255
+  },
+  {
+   "text": "a",
+   "start": 112.28,
+   "end": 112.342
+  },
+  {
+   "text": "direct",
+   "start": 112.354,
+   "end": 112.679
+  },
+  {
+   "text": "holding",
+   "start": 112.704,
+   "end": 113.054
+  },
+  {
+   "text": "during",
+   "start": 113.079,
+   "end": 113.342
+  },
+  {
+   "text": "the",
+   "start": 113.367,
+   "end": 113.467
+  },
+  {
+   "text": "period",
+   "start": 113.48,
+   "end": 114.042
+  },
+  {
+   "text": "Examining",
+   "start": 115.636,
+   "end": 116.211
+  },
+  {
+   "text": "the",
+   "start": 116.236,
+   "end": 116.336
+  },
+  {
+   "text": "revenue",
+   "start": 116.361,
+   "end": 116.748
+  },
+  {
+   "text": "mix",
+   "start": 116.774,
+   "end": 117.036
+  },
+  {
+   "text": "during",
+   "start": 117.061,
+   "end": 117.298
+  },
+  {
+   "text": "the",
+   "start": 117.324,
+   "end": 117.424
+  },
+  {
+   "text": "first",
+   "start": 117.436,
+   "end": 117.724
+  },
+  {
+   "text": "half",
+   "start": 117.748,
+   "end": 117.986
+  },
+  {
+   "text": "of",
+   "start": 117.998,
+   "end": 118.111
+  },
+  {
+   "text": "2026",
+   "start": 118.136,
+   "end": 119.161
+  },
+  {
+   "text": "operations",
+   "start": 119.449,
+   "end": 120.061
+  },
+  {
+   "text": "remained",
+   "start": 120.073,
+   "end": 120.411
+  },
+  {
+   "text": "well",
+   "start": 120.436,
+   "end": 120.611
+  },
+  {
+   "text": "diversified",
+   "start": 120.636,
+   "end": 121.298
+  },
+  {
+   "text": "across",
+   "start": 121.323,
+   "end": 121.648
+  },
+  {
+   "text": "core",
+   "start": 121.661,
+   "end": 121.874
+  },
+  {
+   "text": "industrial",
+   "start": 121.898,
+   "end": 122.461
+  },
+  {
+   "text": "segments",
+   "start": 122.486,
+   "end": 123.011
+  },
+  {
+   "text": "Fertilisers",
+   "start": 123.874,
+   "end": 124.636
+  },
+  {
+   "text": "represented",
+   "start": 124.661,
+   "end": 125.261
+  },
+  {
+   "text": "the",
+   "start": 125.286,
+   "end": 125.386
+  },
+  {
+   "text": "largest",
+   "start": 125.411,
+   "end": 125.786
+  },
+  {
+   "text": "share",
+   "start": 125.811,
+   "end": 126.186
+  },
+  {
+   "text": "contributing",
+   "start": 126.348,
+   "end": 126.974
+  },
+  {
+   "text": "38 percent",
+   "start": 126.999,
+   "end": 127.924
+  },
+  {
+   "text": "of",
+   "start": 127.936,
+   "end": 128.036
+  },
+  {
+   "text": "total",
+   "start": 128.061,
+   "end": 128.361
+  },
+  {
+   "text": "revenue",
+   "start": 128.386,
+   "end": 128.874
+  },
+  {
+   "text": "Steel",
+   "start": 129.749,
+   "end": 130.124
+  },
+  {
+   "text": "accounted",
+   "start": 130.149,
+   "end": 130.524
+  },
+  {
+   "text": "for",
+   "start": 130.548,
+   "end": 130.686
+  },
+  {
+   "text": "36.5 percent",
+   "start": 130.711,
+   "end": 132.061
+  },
+  {
+   "text": "of",
+   "start": 132.074,
+   "end": 132.149
+  },
+  {
+   "text": "turnover",
+   "start": 132.173,
+   "end": 132.611
+  },
+  {
+   "text": "while",
+   "start": 132.811,
+   "end": 132.998
+  },
+  {
+   "text": "petrochemicals",
+   "start": 133.024,
+   "end": 133.848
+  },
+  {
+   "text": "generated",
+   "start": 133.873,
+   "end": 134.436
+  },
+  {
+   "text": "25.5 percent",
+   "start": 134.449,
+   "end": 136.074
+  },
+  {
+   "text": "Together",
+   "start": 136.949,
+   "end": 137.411
+  },
+  {
+   "text": "fertilisers",
+   "start": 137.574,
+   "end": 138.261
+  },
+  {
+   "text": "and",
+   "start": 138.286,
+   "end": 138.373
+  },
+  {
+   "text": "steel",
+   "start": 138.399,
+   "end": 138.736
+  },
+  {
+   "text": "provided",
+   "start": 138.761,
+   "end": 139.236
+  },
+  {
+   "text": "crucial",
+   "start": 139.261,
+   "end": 139.636
+  },
+  {
+   "text": "stability",
+   "start": 139.661,
+   "end": 140.199
+  },
+  {
+   "text": "while",
+   "start": 140.224,
+   "end": 140.423
+  },
+  {
+   "text": "petrochemical",
+   "start": 140.449,
+   "end": 141.224
+  },
+  {
+   "text": "operations",
+   "start": 141.248,
+   "end": 141.886
+  },
+  {
+   "text": "faced",
+   "start": 141.911,
+   "end": 142.211
+  },
+  {
+   "text": "headwinds",
+   "start": 142.236,
+   "end": 142.823
+  },
+  {
+   "text": "Despite",
+   "start": 144.412,
+   "end": 144.812
+  },
+  {
+   "text": "quarterly",
+   "start": 144.824,
+   "end": 145.287
+  },
+  {
+   "text": "challenges",
+   "start": 145.3,
+   "end": 145.874
+  },
+  {
+   "text": "Industries",
+   "start": 146.074,
+   "end": 146.587
+  },
+  {
+   "text": "Qatar",
+   "start": 146.612,
+   "end": 146.974
+  },
+  {
+   "text": "maintains",
+   "start": 146.987,
+   "end": 147.462
+  },
+  {
+   "text": "a",
+   "start": 147.475,
+   "end": 147.537
+  },
+  {
+   "text": "solid",
+   "start": 147.562,
+   "end": 147.937
+  },
+  {
+   "text": "financial",
+   "start": 147.962,
+   "end": 148.437
+  },
+  {
+   "text": "position",
+   "start": 148.45,
+   "end": 148.975
+  },
+  {
+   "text": "The",
+   "start": 149.862,
+   "end": 149.987
+  },
+  {
+   "text": "company",
+   "start": 150.012,
+   "end": 150.412
+  },
+  {
+   "text": "carries",
+   "start": 150.437,
+   "end": 150.787
+  },
+  {
+   "text": "no",
+   "start": 150.812,
+   "end": 150.962
+  },
+  {
+   "text": "long-term",
+   "start": 150.974,
+   "end": 151.462
+  },
+  {
+   "text": "debt",
+   "start": 151.487,
+   "end": 151.737
+  },
+  {
+   "text": "and",
+   "start": 151.937,
+   "end": 152.025
+  },
+  {
+   "text": "liquidity",
+   "start": 152.049,
+   "end": 152.574
+  },
+  {
+   "text": "remains",
+   "start": 152.599,
+   "end": 152.962
+  },
+  {
+   "text": "strong",
+   "start": 152.974,
+   "end": 153.449
+  },
+  {
+   "text": "Cash",
+   "start": 154.337,
+   "end": 154.624
+  },
+  {
+   "text": "and",
+   "start": 154.637,
+   "end": 154.724
+  },
+  {
+   "text": "bank",
+   "start": 154.75,
+   "end": 154.974
+  },
+  {
+   "text": "balances",
+   "start": 154.987,
+   "end": 155.5
+  },
+  {
+   "text": "stood",
+   "start": 155.525,
+   "end": 155.724
+  },
+  {
+   "text": "at",
+   "start": 155.75,
+   "end": 155.837
+  },
+  {
+   "text": "QR",
+   "start": 155.862,
+   "end": 156.237
+  },
+  {
+   "text": "8.6",
+   "start": 156.262,
+   "end": 156.899
+  },
+  {
+   "text": "billion",
+   "start": 156.912,
+   "end": 157.275
+  },
+  {
+   "text": "at",
+   "start": 157.287,
+   "end": 157.362
+  },
+  {
+   "text": "the",
+   "start": 157.387,
+   "end": 157.487
+  },
+  {
+   "text": "end",
+   "start": 157.512,
+   "end": 157.699
+  },
+  {
+   "text": "of",
+   "start": 157.712,
+   "end": 157.787
+  },
+  {
+   "text": "the",
+   "start": 157.812,
+   "end": 157.9
+  },
+  {
+   "text": "first",
+   "start": 157.925,
+   "end": 158.2
+  },
+  {
+   "text": "half",
+   "start": 158.224,
+   "end": 158.474
+  },
+  {
+   "text": "of",
+   "start": 158.5,
+   "end": 158.599
+  },
+  {
+   "text": "2026",
+   "start": 158.624,
+   "end": 159.624
+  },
+  {
+   "text": "compared",
+   "start": 159.887,
+   "end": 160.25
+  },
+  {
+   "text": "to",
+   "start": 160.262,
+   "end": 160.349
+  },
+  {
+   "text": "QR",
+   "start": 160.362,
+   "end": 160.725
+  },
+  {
+   "text": "8.4",
+   "start": 160.75,
+   "end": 161.362
+  },
+  {
+   "text": "billion",
+   "start": 161.387,
+   "end": 161.75
+  },
+  {
+   "text": "at",
+   "start": 161.774,
+   "end": 161.849
+  },
+  {
+   "text": "the",
+   "start": 161.874,
+   "end": 161.987
+  },
+  {
+   "text": "close",
+   "start": 162.012,
+   "end": 162.312
+  },
+  {
+   "text": "of",
+   "start": 162.337,
+   "end": 162.399
+  },
+  {
+   "text": "the",
+   "start": 162.425,
+   "end": 162.525
+  },
+  {
+   "text": "first",
+   "start": 162.537,
+   "end": 162.825
+  },
+  {
+   "text": "quarter",
+   "start": 162.85,
+   "end": 163.175
+  },
+  {
+   "text": "of",
+   "start": 163.187,
+   "end": 163.262
+  },
+  {
+   "text": "2026",
+   "start": 163.287,
+   "end": 164.337
+  },
+  {
+   "text": "The",
+   "start": 165.212,
+   "end": 165.349
+  },
+  {
+   "text": "group",
+   "start": 165.374,
+   "end": 165.649
+  },
+  {
+   "text": "also",
+   "start": 165.662,
+   "end": 165.975
+  },
+  {
+   "text": "completed",
+   "start": 166.0,
+   "end": 166.537
+  },
+  {
+   "text": "its",
+   "start": 166.562,
+   "end": 166.712
+  },
+  {
+   "text": "scheduled",
+   "start": 166.737,
+   "end": 167.175
+  },
+  {
+   "text": "dividend",
+   "start": 167.199,
+   "end": 167.675
+  },
+  {
+   "text": "distribution",
+   "start": 167.687,
+   "end": 168.475
+  },
+  {
+   "text": "Looking",
+   "start": 169.362,
+   "end": 169.737
+  },
+  {
+   "text": "ahead",
+   "start": 169.762,
+   "end": 170.112
+  },
+  {
+   "text": "market",
+   "start": 170.324,
+   "end": 170.699
+  },
+  {
+   "text": "watchers",
+   "start": 170.725,
+   "end": 171.124
+  },
+  {
+   "text": "will",
+   "start": 171.149,
+   "end": 171.299
+  },
+  {
+   "text": "track",
+   "start": 171.324,
+   "end": 171.612
+  },
+  {
+   "text": "export",
+   "start": 171.624,
+   "end": 172.05
+  },
+  {
+   "text": "logistics",
+   "start": 172.074,
+   "end": 172.662
+  },
+  {
+   "text": "and",
+   "start": 172.687,
+   "end": 172.812
+  },
+  {
+   "text": "commodity",
+   "start": 172.837,
+   "end": 173.362
+  },
+  {
+   "text": "price",
+   "start": 173.387,
+   "end": 173.662
+  },
+  {
+   "text": "movements",
+   "start": 173.675,
+   "end": 174.225
+  },
+  {
+   "text": "That",
+   "start": 175.804,
+   "end": 176.016
+  },
+  {
+   "text": "concludes",
+   "start": 176.042,
+   "end": 176.479
+  },
+  {
+   "text": "our",
+   "start": 176.504,
+   "end": 176.617
+  },
+  {
+   "text": "quarterly",
+   "start": 176.629,
+   "end": 177.117
+  },
+  {
+   "text": "review",
+   "start": 177.129,
+   "end": 177.479
+  },
+  {
+   "text": "of",
+   "start": 177.504,
+   "end": 177.604
+  },
+  {
+   "text": "Industries",
+   "start": 177.629,
+   "end": 178.117
+  },
+  {
+   "text": "Qatar",
+   "start": 178.142,
+   "end": 178.604
+  },
+  {
+   "text": "for",
+   "start": 178.629,
+   "end": 178.766
+  },
+  {
+   "text": "the",
+   "start": 178.779,
+   "end": 178.879
+  },
+  {
+   "text": "second",
+   "start": 178.904,
+   "end": 179.266
+  },
+  {
+   "text": "quarter",
+   "start": 179.279,
+   "end": 179.642
+  },
+  {
+   "text": "of",
+   "start": 179.654,
+   "end": 179.754
+  },
+  {
+   "text": "2026",
+   "start": 179.779,
+   "end": 180.879
+  },
+  {
+   "text": "Thank",
+   "start": 181.754,
+   "end": 182.079
+  },
+  {
+   "text": "you",
+   "start": 182.092,
+   "end": 182.217
+  },
+  {
+   "text": "for",
+   "start": 182.241,
+   "end": 182.429
+  },
+  {
+   "text": "watching",
+   "start": 182.454,
+   "end": 182.954
+  }
+ ],
+ "captions": true,
+ "demo": true,
+ "company": "Industries Qatar",
+ "quarter": "Q2 2026"
+}

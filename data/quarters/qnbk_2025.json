@@ -1,0 +1,52 @@
+{
+  "_note": "Extracted from uploaded documents and approved by a reviewer on 2026-10-10.",
+  "company": {
+    "exchange": "Qatar Stock Exchange",
+    "currency": "QAR",
+    "unit": "QR million",
+    "fiscal_year": "Calendar (Jan-Dec)",
+    "name_en": "QNB Group",
+    "name_ar": "بنك قطر الوطني",
+    "ticker": "QNBK"
+  },
+  "current_quarter": "H1 2025",
+  "quarters": [
+    {
+      "period": "H1 2025",
+      "months": "Jan-Jun 2025",
+      "derived": false,
+      "sources": [
+        "QNBK-Financials-2025-06-30-XBRL.pdf p.17",
+        "QNBK-Financials-2025-06-30-XBRL.pdf p.21"
+      ],
+      "net_profit": 8400.8,
+      "eps_qr": 0.85,
+      "cash_and_bank": 101796.9,
+      "comparatives": {
+        "net_profit_h1_2024": 8161.8,
+        "eps_h1_2024": 0.82
+      }
+    }
+  ],
+  "history_net_profit": [
+    {
+      "period": "H1 2024",
+      "ytd_net_profit": 8161.8
+    }
+  ],
+  "narrative_drivers": [
+    "Profit growth was supported by higher income from continuing operations and effective cost management.",
+    "Cash flow was impacted by changes in working capital, including increases in loans and advances to customers and changes in deposits.",
+    "The bank's equity position was influenced by treasury shares transactions and other comprehensive income components such as exchange differences and fair value reserves.",
+    "Earnings per share increased reflecting improved profitability for the period."
+  ],
+  "source_documents": {
+    "doc_9": "QNBK-Financials-2025-06-30-XBRL.pdf"
+  },
+  "narrative_drivers_ar": [
+    "نمو الأرباح مدعوم بزيادة الدخل من العمليات المستمرة وإدارة التكاليف الفعالة.",
+    "تأثرت التدفقات النقدية بالتغيرات في رأس المال العامل، بما في ذلك الزيادات في القروض والسلف للعملاء والتغيرات في الودائع.",
+    "تأثرت وضعية حقوق الملكية للبنك بعمليات الأسهم الخزينة ومكونات الدخل الشامل الأخرى مثل فروق الصرف واحتياطيات القيمة العادلة.",
+    "ارتفع ربح السهم الواحد مما يعكس تحسناً في الربحية للفترة."
+  ]
+}
