@@ -213,9 +213,11 @@ class GeminiProvider(_CachedJSONProvider):
     """Calls the configured model; when its free daily quota is used up, falls back to the next
     model in GEMINI_FALLBACK_MODELS (each model has its own free quota), then to OpenAI if a key is set."""
 
-    def __init__(self, model: str | None = None, api_key: str | None = None, max_rpm: int | None = None):
+    def __init__(self, model: str | None = None, api_key: str | None = None, max_rpm: int | None = None,
+                 fallbacks: list[str] | None = None):
         self.model = model or settings.gemini_model
-        self.fallbacks = [m for m in settings.gemini_fallback_models if m and m != self.model]
+        chain = settings.gemini_fallback_models if fallbacks is None else fallbacks
+        self.fallbacks = [m for m in chain if m and m != self.model]
         self.exhausted = _EXHAUSTED  # model -> time.time() when its daily quota resets (shared)
         self.last_model = self.model
         key = api_key or settings.gemini_api_key
@@ -298,6 +300,22 @@ def get_llm() -> LLMProvider:
     if not isinstance(_provider, GeminiProvider) or _provider.model != wanted:
         _provider = GeminiProvider(model=wanted)
     return _provider
+
+
+_fast: LLMProvider | None = None
+
+
+def get_fast_llm() -> LLMProvider:
+    """Light model for small, latency-sensitive calls (chat follow-up detection, memory summaries).
+    Has its own free quota and rate window; falls back to other lite models, then the main chain."""
+    global _fast
+    if _fast is None:
+        if settings.llm_provider == "openai":
+            _fast = OpenAIProvider(model=settings.openai_fast_model)
+        else:
+            _fast = GeminiProvider(model=settings.fast_model,
+                                   fallbacks=[*settings.fast_fallback_models, *settings.gemini_fallback_models])
+    return _fast
 
 
 def list_models() -> list[str]:

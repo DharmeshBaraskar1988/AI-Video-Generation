@@ -67,7 +67,19 @@ class StockLog(SQLModel, table=True):
     answer: str
     raw: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     ok: bool = True
+    session_id: str | None = Field(default=None, index=True)  # stock chat conversation
+    standalone: str | None = None  # question rewritten with the conversation's context
+    topic_start: bool = False  # first turn of a new topic: the short-term window restarts here
+    summarized: bool = False  # folded into ChatMemory.summary
     created_at: datetime = Field(default_factory=_now)
+
+
+class ChatMemory(SQLModel, table=True):
+    """Long-term memory of a stock chat: dense summary of turns that left the short-term window."""
+    session_id: str = Field(primary_key=True)
+    summary: str = ""
+    turns: int = 0  # how many turns the summary covers
+    updated_at: datetime = Field(default_factory=_now)
 
 
 class Document(SQLModel, table=True):

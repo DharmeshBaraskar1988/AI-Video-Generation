@@ -82,11 +82,11 @@ def find_by_symbol(symbol: str) -> dict[str, Any] | None:
 
 # ---------- helpers ----------
 
-def _cached(key: str, fn):
+def _cached(key: str, fn, ttl: float | None = None):
     now = time.time()
     with _lock:
         hit = _cache.get(key)
-        if hit and now - hit[0] < settings.stock_cache_seconds:
+        if hit and now - hit[0] < (ttl or settings.stock_cache_seconds):
             return hit[1]
     value = fn()
     with _lock:
@@ -152,6 +152,65 @@ def get_quote(symbol: str) -> dict[str, Any]:
     return _cached(f"quote:{symbol}", fetch)
 
 
+PROFILE_TTL = 6 * 3600  # company details change rarely
+
+
+def yahoo_url(symbol: str) -> str:
+    return f"https://finance.yahoo.com/quote/{symbol}"
+
+
+def _big_qr(x: float | None) -> str | None:
+    if not x:
+        return None
+    return f"QR {x / 1e9:,.2f} billion" if abs(x) >= 1e9 else f"QR {x / 1e6:,.1f} million"
+
+
+def _num(x: Any, places: int = 2, suffix: str = "") -> str | None:
+    return f"{float(x):,.{places}f}{suffix}" if isinstance(x, (int, float)) else None
+
+
+def get_profile(symbol: str) -> dict[str, Any]:
+    """Company details and valuation figures from the price source, formatted here (never by the model).
+    Analyst buy/sell recommendations are left out on purpose (no investment advice)."""
+    def fetch() -> dict[str, Any]:
+        import yfinance as yf
+
+        try:
+            info = yf.Ticker(symbol).info
+        except Exception as exc:  # noqa: BLE001
+            raise StockDataError(f"profile unavailable for {symbol}: {exc}") from exc
+        if not info or not (info.get("longName") or info.get("shortName") or info.get("longBusinessSummary")):
+            raise StockDataError(f"no profile returned for {symbol}")
+        dy = info.get("dividendYield")
+        if isinstance(dy, (int, float)) and dy < 1:  # older yfinance returns a fraction
+            dy = dy * 100
+        low, high = info.get("fiftyTwoWeekLow"), info.get("fiftyTwoWeekHigh")
+        fields = {
+            "name": info.get("longName") or info.get("shortName"),
+            "website": info.get("website"),
+            "sector": info.get("sectorDisp") or info.get("sector"),
+            "industry": info.get("industryDisp") or info.get("industry"),
+            "city": info.get("city"),
+            "employees": _num(info.get("fullTimeEmployees"), 0),
+            "summary": (info.get("longBusinessSummary") or "")[:700] or None,
+            "market_cap": _big_qr(info.get("marketCap")),
+            "pe_trailing": _num(info.get("trailingPE")),
+            "eps_trailing": _num(info.get("trailingEps"), 2),
+            "dividend_per_share": f"QR {info['dividendRate']:.2f}" if isinstance(info.get("dividendRate"), (int, float)) else None,
+            "dividend_yield": _num(dy, 2, "%"),
+            "price_to_book": _num(info.get("priceToBook")),
+            "week52_range": f"QR {low:.3f} - QR {high:.3f}" if low and high else None,
+            "avg_50d": f"QR {info['fiftyDayAverage']:.3f}" if info.get("fiftyDayAverage") else None,
+            "avg_200d": f"QR {info['twoHundredDayAverage']:.3f}" if info.get("twoHundredDayAverage") else None,
+            "revenue_ttm": _big_qr(info.get("totalRevenue")),
+            "net_income_ttm": _big_qr(info.get("netIncomeToCommon")),
+        }
+        return {"symbol": symbol, **{k: v for k, v in fields.items() if v}, "source": SOURCE, "url": yahoo_url(symbol),
+                "fetched_at": datetime.now(DOHA).isoformat(timespec="minutes")}
+
+    return _cached(f"profile:{symbol}", fetch, ttl=PROFILE_TTL)
+
+
 def get_history(symbol: str, days: int) -> dict[str, Any]:
     """Daily closes over the last `days` calendar days and the change, computed here."""
     days = max(1, min(int(days), 3650))
@@ -215,6 +274,60 @@ def search_news(company: dict[str, Any], max_results: int = 5) -> list[dict[str,
         return items[:max_results]
 
     return _cached(f"news:{company['symbol']}", fetch)
+
+
+# Official pages, always offered for general market / regulator questions (no search needed)
+OFFICIAL_LINKS = [
+    {"title": "Qatar Stock Exchange (QSE) - official website", "url": "https://www.qe.com.qa/",
+     "snippet": "Official site of the Qatar Stock Exchange: market data, listed companies, disclosures and news.",
+     "keywords": ["qse", "exchange", "bourse", "market", "listed", "index", "بورصة", "السوق"]},
+    {"title": "Qatar Financial Markets Authority (QFMA)", "url": "https://www.qfma.org.qa/",
+     "snippet": "Regulator of Qatar's financial markets: rules, licensed companies and announcements.",
+     "keywords": ["qfma", "regulator", "authority", "regulation", "هيئة", "رقابة"]},
+]
+
+
+def _domain(url: str) -> str:
+    return re.sub(r"^https?://(www\.)?", "", url or "").split("/")[0]
+
+
+def official_links(text: str) -> list[dict[str, Any]]:
+    t = normalize(text)
+    return [{**{k: v for k, v in o.items() if k != "keywords"}, "source": _domain(o["url"]), "date": "", "official": True}
+            for o in OFFICIAL_LINKS if any(normalize(k) in t for k in o["keywords"])]
+
+
+def search_web(query: str, max_results: int = 5) -> list[dict[str, Any]]:
+    """DuckDuckGo web results (title, url, snippet) for general market questions. Context and links only,
+    never a source of prices or figures."""
+    def fetch() -> list[dict[str, Any]]:
+        from ddgs import DDGS
+
+        try:
+            raw = list(DDGS().text(query, max_results=max_results))
+        except Exception as exc:  # noqa: BLE001 - search is optional
+            log.warning("web search failed: %s", exc)
+            return []
+        return [{"title": r.get("title"), "url": r.get("href"), "snippet": (r.get("body") or "")[:300],
+                 "source": _domain(r.get("href") or ""), "date": ""} for r in raw if r.get("href")]
+
+    return _cached(f"web:{query.lower()}", fetch, ttl=3600)
+
+
+def search_news_query(query: str, max_results: int = 5) -> list[dict[str, Any]]:
+    """DuckDuckGo news for a free-text market question (no company)."""
+    def fetch() -> list[dict[str, Any]]:
+        from ddgs import DDGS
+
+        try:
+            raw = list(DDGS().news(query, max_results=max_results))
+        except Exception as exc:  # noqa: BLE001
+            log.warning("news search failed: %s", exc)
+            return []
+        return [{"title": r.get("title"), "source": r.get("source"), "date": (r.get("date") or "")[:10],
+                 "url": r.get("url"), "snippet": (r.get("body") or "")[:300]} for r in raw if r.get("url")]
+
+    return _cached(f"newsq:{query.lower()}", fetch)
 
 
 def days_since_year_start(today: date | None = None) -> int:

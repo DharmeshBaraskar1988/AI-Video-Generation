@@ -37,6 +37,13 @@ class Settings:
     gemini_fallback_models: list[str] = [
         m.strip() for m in os.getenv("GEMINI_FALLBACK_MODELS", "").split(",") if m.strip()
     ]
+    # Very light, fast model for chat bookkeeping (follow-up detection, memory summaries)
+    fast_model: str = os.getenv("GEMINI_FAST_MODEL", "gemini-3.5-flash-lite")
+    fast_fallback_models: list[str] = [
+        m.strip() for m in os.getenv("GEMINI_FAST_FALLBACK_MODELS", "gemini-3.1-flash-lite,gemini-2.5-flash-lite").split(",")
+        if m.strip()
+    ]
+    openai_fast_model: str = os.getenv("OPENAI_FAST_MODEL", "gpt-4.1-nano")
 
     # Embeddings
     embedding_model: str = os.getenv("EMBEDDING_MODEL", "intfloat/multilingual-e5-small")
