@@ -2,13 +2,17 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Response, UploadFile
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from pypdf import PdfReader, PdfWriter
 from sqlmodel import Session, select
 
 from ..config import settings
@@ -138,6 +142,42 @@ def delete_document(doc_id: int) -> dict:
         s.delete(doc)
         s.commit()
     return {"documents": rag.list_documents(), "group": group}
+
+
+def _doc_file(doc_id: int) -> tuple[Document, Path]:
+    with Session(engine) as s:
+        doc = s.get(Document, doc_id)
+    if not doc or not (path := settings.documents_dir / doc.file).exists():
+        raise HTTPException(404, "No such document")
+    return doc, path
+
+
+@router.get("/api/documents/{doc_id}/download")
+def download_document(doc_id: int) -> FileResponse:
+    """The whole source document, as an attachment with its original name."""
+    doc, path = _doc_file(doc_id)
+    return FileResponse(path, filename=doc.name or doc.file)
+
+
+@router.get("/api/documents/{doc_id}/pages")
+def download_pages(doc_id: int, start: int, end: int | None = None) -> Response:
+    """Only the cited page(s) of a PDF (1-based, inclusive), so a source can be saved on its own."""
+    doc, path = _doc_file(doc_id)
+    if path.suffix.lower() != ".pdf":
+        raise HTTPException(400, "Page extracts are only available for PDF documents")
+    reader = PdfReader(str(path))
+    end = end or start
+    if not 1 <= start <= end <= len(reader.pages):
+        raise HTTPException(400, f"Pages must be within 1-{len(reader.pages)}")
+    writer = PdfWriter()
+    for i in range(start - 1, end):
+        writer.add_page(reader.pages[i])
+    buf = io.BytesIO()
+    writer.write(buf)
+    pages = f"p{start}" if start == end else f"p{start}-{end}"
+    name = f"{Path(doc.name or doc.file).stem}_{pages}.pdf"
+    return Response(buf.getvalue(), media_type="application/pdf",
+                    headers={"Content-Disposition": f"attachment; filename*=UTF-8''{quote(name)}"})
 
 
 @router.get("/api/documents/search")

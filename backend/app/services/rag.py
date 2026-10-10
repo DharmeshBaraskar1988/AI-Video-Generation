@@ -339,6 +339,13 @@ def search(query: str, k: int = 8, where: dict[str, Any] | None = None) -> list[
     return hits[:k]
 
 
+def doc_chunks(doc_id: int, max_page: int) -> list[dict[str, Any]]:
+    """Chunks of one document's opening pages (title page, auditor's report), in page order."""
+    res = collection().get(where={"$and": [{"doc_id": doc_id}, {"page": {"$lte": max_page}}]})
+    out = [{"id": i, "text": t, **m} for i, t, m in zip(res["ids"], res["documents"], res["metadatas"])]
+    return sorted(out, key=lambda c: (c["page"], c["id"]))
+
+
 def get_chunks(ids: list[str]) -> list[dict[str, Any]]:
     if not ids:
         return []

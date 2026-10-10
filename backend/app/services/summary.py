@@ -1,8 +1,12 @@
-"""Cited results summary from the document index.
+"""Disclosure summary of a company's results documents (one company + period), portal style.
 
-One Gemini call per section (passages from rag.search), then one call for the executive
-summary (EN + AR) and Arabic translations of the section points. Every bullet keeps its
-citations, and every number in it is checked against the cited passages.
+Two Gemini calls per summary:
+  1. analysis  - passages from rag (statements, auditor's report, notes) -> document facts, key figures
+                 copied exactly as printed, an executive summary with {{F1}} placeholders, implications
+                 and a full analysis, every item citing its passages;
+  2. Arabic    - translation of every text item, placeholders kept.
+Python then checks each figure is printed in its cited passage, computes the year-on-year changes,
+fills the placeholders and flags any other number not found in the cited passages.
 """
 from __future__ import annotations
 
@@ -17,26 +21,34 @@ from typing import Any
 
 from ..config import settings
 from . import rag
+from .doc_agent import _value_in_text, parse_number, unit_factor
+from .factcheck import _num
 from .llm import get_llm, load_prompt
 
 log = logging.getLogger(__name__)
 
-SECTIONS = [
-    ("performance", "Financial performance", "النتائج المالية",
-     "revenue net profit earnings per share for {period} compared with the same period last year"),
-    ("segments", "Segment performance", "أداء القطاعات",
-     "segment information revenue and profit by business segment"),
-    ("drivers", "Operating environment and drivers", "بيئة التشغيل والعوامل المؤثرة",
-     "sales volumes selling prices costs production factors affecting the results"),
-    ("balance", "Balance sheet, cash and dividends", "الميزانية والنقد والتوزيعات",
-     "cash and bank balances total assets equity liquidity debt dividend paid"),
-    ("corporate", "Corporate developments and outlook", "التطورات المؤسسية والتوقعات",
-     "acquisitions ownership changes subsidiaries joint ventures outlook strategy"),
+VERSION = 2
+# Searches that together cover a results document: statements, auditor's report, notes, capital actions.
+QUERIES = [
+    "independent auditor's report opinion unqualified key audit matters",
+    "auditor signature partner of Ernst & Young KPMG Deloitte PricewaterhouseCoopers Qatar Auditors Registry Number date",
+    "statement of financial position total assets total liabilities total equity",
+    "income statement revenue net profit for the year earnings per share",
+    "statement of comprehensive income total comprehensive income for the year",
+    "statement of cash flows net cash from operating activities",
+    "dividend proposed distribution bonus shares share buyback capital",
+    "approved by the board of directors and authorised for issue",
+    "segment information revenue and profit by business segment",
+    "expected credit loss impairment provisions credit risk stage",
+    "tax regulation acquisitions subsidiaries subsequent events significant developments",
 ]
-PASSAGES_PER_SECTION = 8
+PASSAGES_PER_QUERY = 5
+OPENING_PAGES = 3
+MAX_PASSAGES = 45
 SUMMARY_DIR = settings.outputs_dir / "summary"
-LEGACY_PATH = SUMMARY_DIR / "summary.json"  # before summaries were per company/period (Industries Qatar H1 2026)
 NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+PLACEHOLDER_RE = re.compile(r"\{\{\s*(F\d+)(?:\.(prior|change))?\s*\}\}")
+NOTE_RE = re.compile(r"^(\d{1,2})\.\s")
 MONTHS = (
     "January|February|March|April|May|June|July|August|September|October|November|December|"
     "Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|"
@@ -47,49 +59,52 @@ DATE_RE = re.compile(
     rf"\b\d{{1,2}}[ -](?:{MONTHS})(?:[ -]\d{{2,4}})?\b"  # 30 June 2026, 30-June-26, 30 يونيو
     r"|(?<![\d,.])(?:19|20)\d{2}(?![\d,.]\d)"  # years, not digits inside a larger number
     r"|\b[1-4]Q[- ]?\d{2}\b|\bQ[1-4]\b|\b[12]H[- ]?\d{2}\b|\bH[12]\b"  # 2Q-26, Q2, 1H-26, H1
+    r"|\b(?:Note|Stage|Pillar|IFRS|IAS)\s+\d+\b"  # Note 10, Stage 3, Pillar Two, IFRS 9
 )
 
-SECTION_SCHEMA = {
+_STR = {"type": "string"}
+_CITES = {"type": "array", "items": _STR}
+_ITEM = {"type": "object", "properties": {"text": _STR, "citations": _CITES}, "required": ["text", "citations"]}
+ANALYSIS_SCHEMA = {
     "type": "object",
     "properties": {
-        "points": {
+        "document": {
+            "type": "object",
+            "properties": {
+                "title": _STR, "issuer": _STR, "doc_kind": _STR, "auditor": _STR, "opinion": _STR,
+                "opinion_citations": _CITES, "board_approval": _STR, "board_citations": _CITES,
+            },
+            "required": ["title", "issuer", "doc_kind", "auditor", "opinion", "opinion_citations",
+                         "board_approval", "board_citations"],
+        },
+        "period_labels": {"type": "object", "properties": {"current": _STR, "prior": _STR}, "required": ["current", "prior"]},
+        "figures": {
             "type": "array",
             "items": {
                 "type": "object",
-                "properties": {"text": {"type": "string"}, "citations": {"type": "array", "items": {"type": "string"}}},
-                "required": ["text", "citations"],
+                "properties": {"metric": _STR, "current": _STR, "prior": _STR, "unit": _STR, "citations": _CITES},
+                "required": ["metric", "current", "prior", "unit", "citations"],
             },
-        }
+        },
+        "executive": _ITEM,
+        "implications": {
+            "type": "array",
+            "items": {"type": "object", "properties": {"title": _STR, "text": _STR, "citations": _CITES},
+                      "required": ["title", "text", "citations"]},
+        },
+        "sections": {
+            "type": "array",
+            "items": {"type": "object", "properties": {"title": _STR, "points": {"type": "array", "items": _ITEM}},
+                      "required": ["title", "points"]},
+        },
     },
-    "required": ["points"],
+    "required": ["document", "period_labels", "figures", "executive", "implications", "sections"],
 }
-EXEC_SCHEMA = {
+TRANSLATE_SCHEMA = {
     "type": "object",
-    "properties": {
-        "title_en": {"type": "string"},
-        "title_ar": {"type": "string"},
-        "executive": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "en": {"type": "string"},
-                    "ar": {"type": "string"},
-                    "citations": {"type": "array", "items": {"type": "string"}},
-                },
-                "required": ["en", "ar", "citations"],
-            },
-        },
-        "translations": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {"label": {"type": "string"}, "ar": {"type": "string"}},
-                "required": ["label", "ar"],
-            },
-        },
-    },
-    "required": ["title_en", "title_ar", "executive", "translations"],
+    "properties": {"items": {"type": "array", "items": {
+        "type": "object", "properties": {"label": _STR, "ar": _STR}, "required": ["label", "ar"]}}},
+    "required": ["items"],
 }
 
 _states: dict[str, dict[str, Any]] = {}
@@ -139,31 +154,77 @@ def unverified_numbers(text: str, sources: list[str]) -> list[str]:
     return missing
 
 
-# ---------- generation ----------
+# ---------- figures: Python formats, compares and fills ----------
 
-def _section(title: str, query: str, where: dict) -> tuple[list[dict], list[dict]]:
-    hits = rag.search(query, k=PASSAGES_PER_SECTION, where=where)
-    if not hits:
-        return [], []
-    labelled = {f"C{i + 1}": h for i, h in enumerate(hits)}
-    payload = {
-        "SECTION": title,
-        "PASSAGES": [
-            {"label": lab, "file": h["file"], "page": h["page"], "section": h["section"], "text": h["text"]}
-            for lab, h in labelled.items()
-        ],
-    }
-    out = get_llm().generate_json(
-        json.dumps(payload, ensure_ascii=False, indent=1), system=load_prompt("summary_section.md"), temperature=0.2,
-        schema=SECTION_SCHEMA,
-    )
-    points = []
-    for p in out.get("points", []):
-        ids = [labelled[c]["id"] for c in p.get("citations", []) if c in labelled]
-        if p.get("text") and ids:
-            points.append({"en": p["text"].strip(), "chunk_ids": ids})
-    return points, hits
+def _is_per_share(metric: str, unit: str) -> bool:
+    t = f"{metric} {unit}".lower()
+    return "per share" in t or "eps" in t.split() or "earnings per" in t
 
+
+def format_amount(value: Decimal, unit: str, metric: str) -> tuple[str, str] | None:
+    """Absolute printed value -> ('QR 1,391.3bn', '1,391.3 مليار ريال قطري'); None if the unit is unknown."""
+    v = abs(value)
+    if _is_per_share(metric, unit):
+        n = _num(float(v), 2)
+        return f"QR {n}", f"{n} ريال قطري"
+    factor = unit_factor(unit, metric)
+    if factor is None and re.fullmatch(r"\s*(qr|qar|riyals?)\s*", unit or "", re.I):
+        factor = Decimal("0.000001")
+    if factor is None:
+        return None
+    m = v * factor  # QR million
+    if m >= 1000:
+        b = m / 1000
+        n = _num(float(b), 1 if b >= 100 else 2)
+        return f"QR {n}bn", f"{n} مليار ريال قطري"
+    n = _num(float(m), 0 if m >= 100 else 1)
+    return f"QR {n}m", f"{n} مليون ريال قطري"
+
+
+def change_pct(current: Decimal | None, prior: Decimal | None) -> float | None:
+    """Year-on-year change, only when meaningful (positive base, no sign flip)."""
+    if current is None or prior is None or prior <= 0 or current < 0:
+        return None
+    return float((current - prior) / prior * 100)
+
+
+def _figure_display(f: dict) -> dict[str, dict[str, str]]:
+    """Placeholder texts for one figure: {'F1': {en, ar}, 'F1.prior': ..., 'F1.change': ...}."""
+    out: dict[str, dict[str, str]] = {}
+    for key, raw in ((f["id"], f["current"]), (f"{f['id']}.prior", f["prior"])):
+        v = parse_number(raw) if raw else None
+        fmt = format_amount(v, f["unit"], f["metric_en"]) if v is not None else None
+        if fmt:
+            out[key] = {"en": fmt[0], "ar": fmt[1]}
+        elif raw:
+            out[key] = {"en": f"{raw.strip('()-')} {f['unit']}".strip(), "ar": f"{raw.strip('()-')} {f['unit']}".strip()}
+    pct = f.get("change_pct")
+    if pct is None:
+        out[f"{f['id']}.change"] = {"en": "change not available", "ar": "التغير غير متاح"}
+    elif abs(pct) < 0.05:
+        out[f"{f['id']}.change"] = {"en": "unchanged", "ar": "دون تغيير"}
+    else:
+        n = _num(abs(pct), 1)
+        out[f"{f['id']}.change"] = {"en": f"{'up' if pct > 0 else 'down'} {n}%",
+                                    "ar": f"{'بارتفاع' if pct > 0 else 'بانخفاض'} {n}%"}
+    return out
+
+
+def fill(text: str, display: dict[str, dict[str, str]], lang: str) -> tuple[str, list[str]]:
+    """Replace {{F1}} / {{F1.prior}} / {{F1.change}}; returns (text, unknown placeholders)."""
+    unknown: list[str] = []
+
+    def repl(m: re.Match) -> str:
+        key = m.group(1) + (f".{m.group(2)}" if m.group(2) else "")
+        if key in display:
+            return display[key][lang]
+        unknown.append(key)
+        return "[?]"
+
+    return PLACEHOLDER_RE.sub(repl, text), unknown
+
+
+# ---------- storage keys ----------
 
 def summary_key(company: str, period: str) -> str:
     return f"{company}_{period.lower().replace(' ', '-')}"
@@ -188,66 +249,130 @@ def _company_names(company: str, period: str) -> dict[str, str]:
     return {"name_en": company.upper(), "name_ar": ""}
 
 
+# ---------- generation ----------
+
+def _gather(docs: list[dict], where: dict) -> list[dict]:
+    """Opening pages of each document (title, auditor's report) + the best hits for each query, no duplicates."""
+    seen: dict[str, dict] = {}
+    for d in docs:
+        for c in rag.doc_chunks(d["id"], OPENING_PAGES)[:6]:
+            seen.setdefault(c["id"], c)
+    for q in QUERIES:
+        for h in rag.search(q, k=PASSAGES_PER_QUERY, where=where):
+            seen.setdefault(h["id"], h)
+    return list(seen.values())[:MAX_PASSAGES]
+
+
+def _auditor_in(auditor: str, texts: list[str]) -> bool:
+    """True when the firm's distinctive words (e.g. 'Ernst', 'Young') are printed in one passage."""
+    words = [w for w in re.findall(r"[A-Za-z]{3,}", auditor) if w.lower() not in {"and", "llp", "the", "qatar", "branch", "co"}]
+    return bool(words) and any(all(w.lower() in t.lower() for w in words) for t in texts)
+
+
+def _note(section: str) -> str:
+    m = NOTE_RE.match(section or "")
+    return f"Note {m.group(1)}" if m else ""
+
+
 def generate(company: str, period: str) -> dict[str, Any]:
     docs = [d for d in rag.list_documents() if d["company"] == company and d["period"] == period and d["indexed"]]
     if not docs:
         raise ValueError(f"No indexed documents for {company} {period}. Upload them on the Documents page.")
-    where = rag.doc_where(company, period)
+    names = _company_names(company, period)
+    passages = _gather(docs, rag.doc_where(company, period))
+    labelled = {f"C{i + 1}": p for i, p in enumerate(passages)}
+    llm = get_llm()
 
-    sections = []
-    for sid, title_en, title_ar, query in SECTIONS:
-        points, _ = _section(title_en, query.format(period=period), where)
-        sections.append({"id": sid, "title_en": title_en, "title_ar": title_ar, "points": points})
-
-    # global citation keys K1.. and point labels P1..
-    keys: dict[str, str] = {}
-    labels: dict[str, dict] = {}
-    for sec in sections:
-        for p in sec["points"]:
-            p["citations"] = [keys.setdefault(cid, f"K{len(keys) + 1}") for cid in p.pop("chunk_ids")]
-            label = f"P{len(labels) + 1}"
-            p["label"] = label
-            labels[label] = p
-
-    payload = {
-        "COMPANY": _company_names(company, period),
-        "PERIOD": period,
-        "SECTIONS": [
-            {"title": s["title_en"], "points": [{"label": p["label"], "text": p["en"], "citations": p["citations"]} for p in s["points"]]}
-            for s in sections
-        ],
-    }
-    out = get_llm().generate_json(
-        json.dumps(payload, ensure_ascii=False, indent=1), system=load_prompt("summary_exec.md"), temperature=0.2,
-        schema=EXEC_SCHEMA,
+    out = llm.generate_json(
+        json.dumps({
+            "COMPANY": names, "PERIOD": period,
+            "DOCUMENTS": [{"file": d["name"], "type": d["doc_type"], "pages": d["pages"]} for d in docs],
+            "PASSAGES": [{"label": lab, "file": p["file"], "page": p["page"], "section": p["section"], "text": p["text"]}
+                         for lab, p in labelled.items()],
+        }, ensure_ascii=False, indent=1),
+        system=load_prompt("summary_disclosure.md"), temperature=0.1, schema=ANALYSIS_SCHEMA,
     )
-    for t in out.get("translations") or []:
-        if t.get("label") in labels and t.get("ar"):
-            labels[t["label"]]["ar"] = t["ar"].strip()
 
-    by_key = {k: cid for cid, k in keys.items()}
-    chunks = {c["id"]: c for c in rag.get_chunks(list(keys))}
-    sources = {k: {key: chunks[cid].get(key) for key in ("id", "file", "path", "page", "section", "type", "text")}
-               for k, cid in by_key.items() if cid in chunks}
+    # passage labels C.. -> stable source keys K.. (only passages that are actually cited)
+    keys: dict[str, str] = {}
 
-    def verify(item: dict) -> dict:
-        return verify_item(item, sources)
+    def cite(labels: list[str]) -> list[str]:
+        return [keys.setdefault(lab, f"K{len(keys) + 1}") for lab in labels if lab in labelled]
 
-    executive = [verify({"en": e.get("en", "").strip(), "ar": e.get("ar", "").strip(), "citations": e.get("citations", [])})
-                 for e in out.get("executive", [])]
-    for sec in sections:
-        sec["points"] = [verify(p) for p in sec["points"]]
+    doc = out.get("document") or {}
+    figures = []
+    for f in (out.get("figures") or [])[:10]:
+        if f.get("metric") and f.get("current"):
+            figures.append({"id": f"F{len(figures) + 1}", "metric_en": f["metric"].strip(), "current": f["current"].strip(),
+                            "prior": (f.get("prior") or "").strip(), "unit": (f.get("unit") or "").strip(),
+                            "citations": cite(f.get("citations", []))})
+    executive = {"en": (out.get("executive") or {}).get("text", "").strip(),
+                 "citations": cite((out.get("executive") or {}).get("citations", []))}
+    implications = [{"title_en": i.get("title", "").strip(), "en": i.get("text", "").strip(), "citations": cite(i.get("citations", []))}
+                    for i in out.get("implications") or [] if i.get("text")]
+    sections = [{"title_en": s.get("title", "").strip(),
+                 "points": [{"en": p["text"].strip(), "citations": cite(p.get("citations", []))}
+                            for p in s.get("points") or [] if p.get("text")]}
+                for s in out.get("sections") or []]
+    sections = [s for s in sections if s["points"]]
+    # the auditor must be printed in the passages; a firm name from the model's own knowledge is dropped
+    auditor = doc.get("auditor", "").strip()
+    if auditor and not _auditor_in(auditor, [p["text"] for p in passages]):
+        log.warning("Summary: auditor %r is not in any passage; dropped", auditor)
+        auditor = ""
+    document = {
+        "title_en": doc.get("title", "").strip() or f"{names['name_en']}: {period} results",
+        "issuer_en": doc.get("issuer", "").strip() or names["name_en"],
+        "doc_kind": doc.get("doc_kind", ""), "auditor": auditor,
+        "opinion": (doc.get("opinion") or "").strip().lower(), "opinion_citations": cite(doc.get("opinion_citations", [])),
+        "board_approval": doc.get("board_approval", "").strip(), "board_citations": cite(doc.get("board_citations", [])),
+    }
+
+    # one Arabic call for every text item
+    items = [("title", document["title_en"]), ("issuer", document["issuer_en"]), ("exec", executive["en"])]
+    items += [(f"M{f['id']}", f["metric_en"]) for f in figures]
+    for i, imp in enumerate(implications):
+        items += [(f"IT{i}", imp["title_en"]), (f"I{i}", imp["en"])]
+    for si, s in enumerate(sections):
+        items.append((f"ST{si}", s["title_en"]))
+        items += [(f"P{si}.{pi}", p["en"]) for pi, p in enumerate(s["points"])]
+    tr = llm.generate_json(
+        json.dumps({"COMPANY": names, "ITEMS": [{"label": lab, "en": t} for lab, t in items if t]}, ensure_ascii=False, indent=1),
+        system=load_prompt("summary_translate_ar.md"), temperature=0.1, schema=TRANSLATE_SCHEMA,
+    )
+    ar = {t["label"]: t["ar"].strip() for t in tr.get("items") or [] if t.get("label") and t.get("ar")}
+    document["title_ar"], document["issuer_ar"] = ar.get("title", ""), ar.get("issuer", "") or names["name_ar"]
+    executive["ar"] = ar.get("exec", "")
+    for f in figures:
+        f["metric_ar"] = ar.get(f"M{f['id']}", "")
+    for i, imp in enumerate(implications):
+        imp["title_ar"], imp["ar"] = ar.get(f"IT{i}", ""), ar.get(f"I{i}", "")
+    for si, s in enumerate(sections):
+        s["title_ar"] = ar.get(f"ST{si}", "")
+        for pi, p in enumerate(s["points"]):
+            p["ar"] = ar.get(f"P{si}.{pi}", "")
+
+    sources = {}
+    for lab, k in keys.items():
+        p = labelled[lab]
+        sources[k] = {"id": p["id"], "doc_id": p.get("doc_id"), "file": p["file"], "path": p.get("path"), "page": p["page"],
+                      "section": p.get("section", ""), "note": _note(p.get("section", "")), "type": p.get("type"), "text": p["text"]}
 
     result = {
-        "title_en": out.get("title_en") or "Results summary",
-        "title_ar": out.get("title_ar") or "ملخص النتائج",
-        "executive": executive,
-        "sections": [s for s in sections if s["points"]],
-        "sources": sources,
+        "version": VERSION,
         "company": company,
         "period": period,
-        "documents": [{"file": d["name"], "pages": d["pages"]} for d in docs],
-        "model": get_llm().last_model,
+        "names": names,
+        "document": document,
+        "period_labels": out.get("period_labels") or {"current": period, "prior": ""},
+        "figures": figures,
+        "executive": executive,
+        "implications": implications,
+        "sections": sections,
+        "sources": sources,
+        "documents": [{"id": d["id"], "file": d["name"], "path": d["file"], "pages": d["pages"], "doc_type": d["doc_type"],
+                       "size_kb": d["size_kb"]} for d in docs],
+        "model": llm.last_model,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
     recheck(result)
@@ -256,54 +381,84 @@ def generate(company: str, period: str) -> dict[str, Any]:
     return result
 
 
-def verify_item(item: dict, sources: dict[str, dict]) -> dict:
-    """Keep only known citations and list numbers not found in the cited passages."""
-    cited = [sources[k]["text"] for k in item.get("citations", []) if k in sources]
-    item["citations"] = [k for k in item.get("citations", []) if k in sources]
-    item["unverified"] = {lang: unverified_numbers(item.get(lang, ""), cited) for lang in ("en", "ar") if item.get(lang)}
-    item["verified"] = not any(item["unverified"].values())
-    return item
-
+# ---------- checks (no LLM; run on every load) ----------
 
 def recheck(result: dict[str, Any]) -> dict[str, Any]:
-    """(Re)run the number check on every bullet; cheap, no LLM call."""
-    items = result["executive"] + [p for s in result["sections"] for p in s["points"]]
-    for item in items:
-        verify_item(item, result["sources"])
+    sources = result["sources"]
+
+    def cited(keys: list[str]) -> list[str]:
+        return [sources[k]["text"] for k in keys if k in sources]
+
+    display: dict[str, dict[str, str]] = {}
+    for f in result["figures"]:
+        f["citations"] = [k for k in f["citations"] if k in sources]
+        texts = cited(f["citations"])
+        f["issues"] = []
+        if not texts:
+            f["issues"].append("no source passage")
+        elif not any(_value_in_text(t, f["current"]) for t in texts):
+            f["issues"].append(f"{f['current']} not found in the cited passage")
+        if f["prior"] and texts and not any(_value_in_text(t, f["prior"]) for t in texts):
+            f["issues"].append(f"{f['prior']} not found in the cited passage")
+        f["verified"] = not f["issues"]
+        f["change_pct"] = change_pct(parse_number(f["current"]), parse_number(f["prior"]) if f["prior"] else None)
+        display.update(_figure_display(f))
+
+    def check(item: dict) -> dict:
+        item["citations"] = [k for k in item.get("citations", []) if k in sources]
+        texts = cited(item["citations"])
+        item["display"], item["unverified"] = {}, {}
+        for lang in ("en", "ar"):
+            if not item.get(lang):
+                continue
+            item["display"][lang], unknown = fill(item[lang], display, lang)
+            plain = PLACEHOLDER_RE.sub(" ", item[lang]).replace("**", "")
+            item["unverified"][lang] = unknown + unverified_numbers(plain, texts)
+        item["verified"] = bool(item["citations"]) and not any(item["unverified"].values())
+        return item
+
+    items = [check(result["executive"])]
+    items += [check(i) for i in result["implications"]]
+    items += [check(p) for s in result["sections"] for p in s["points"]]
+
+    d = result["document"]
+    for key in ("opinion_citations", "board_citations"):
+        d[key] = [k for k in d.get(key, []) if k in sources]
+    d["auditor_verified"] = bool(d["auditor"]) and _auditor_in(d["auditor"], [s["text"] for s in sources.values()])
+    d["board_verified"] = bool(d["board_approval"]) and bool(d["board_citations"]) and not unverified_numbers(
+        d["board_approval"], cited(d["board_citations"]))
+
     result["checks"] = {
         "bullets": len(items),
         "verified": sum(i["verified"] for i in items),
         "uncited": sum(not i["citations"] for i in items),
+        "figures": len(result["figures"]),
+        "figures_verified": sum(f["verified"] for f in result["figures"]),
     }
     return result
 
 
-def _migrate_legacy() -> None:
-    if LEGACY_PATH.exists() and not summary_path("iqcd", "H1 2026").exists():
-        data = json.loads(LEGACY_PATH.read_text(encoding="utf-8"))
-        data.setdefault("company", "iqcd")
-        data.setdefault("period", "H1 2026")
-        summary_path("iqcd", "H1 2026").write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
-        LEGACY_PATH.unlink()
-
-
-def load(company: str, period: str) -> dict[str, Any] | None:
-    _migrate_legacy()
+def _read(company: str, period: str) -> dict[str, Any] | None:
     path = summary_path(company, period)
     if not path.exists():
         return None
-    return recheck(json.loads(path.read_text(encoding="utf-8")))
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return data if data.get("version") == VERSION else None  # older layout: regenerate
+
+
+def load(company: str, period: str) -> dict[str, Any] | None:
+    data = _read(company, period)
+    return recheck(data) if data else None
 
 
 def available() -> list[dict[str, Any]]:
     """Company/period pairs that have indexed documents, with whether a summary exists."""
-    _migrate_legacy()
     pairs = sorted({(d["company"], d["period"]) for d in rag.list_documents() if d["company"] and d["period"] and d["indexed"]})
     out = []
     for company, period in pairs:
         names = _company_names(company, period)
         out.append({"company": company, "period": period, "name_en": names["name_en"], "name_ar": names["name_ar"],
-                    "has_summary": summary_path(company, period).exists(), "state": state(company, period)})
+                    "has_summary": _read(company, period) is not None, "state": state(company, period)})
     return out
 
 

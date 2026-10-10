@@ -196,7 +196,7 @@ Do Step 7: services/render.py builds the props per language from the script, wor
 **Prompt for Claude Code**
 
 ```text
-Do Step 8: services/rag.py ingests every PDF in data/documents (pypdf text per page, pdfplumber tables rendered as markdown), chunks to ~600 tokens with {file, page, section} metadata, embeds with sentence-transformers multilingual-e5-small ('passage: ' prefix) into Chroma, and searches with 'query: ' prefix plus a keyword boost. POST /api/documents/ingest, GET /api/documents. Summary: one Gemini call per section, then an executive summary EN + AR with [file p.N] citations (prompts/summary_section.md, summary_exec.md), cached. Build /summary with an Executive / Investor toggle, EN/AR tabs and clickable citations. Also switch the video graph's gather_context to use the index.
+Do Step 8: services/rag.py ingests every PDF in data/documents (pypdf text per page, pdfplumber tables rendered as markdown), chunks to ~600 tokens with {file, page, section} metadata, embeds with sentence-transformers multilingual-e5-small ('passage: ' prefix) into Chroma, and searches with 'query: ' prefix plus a keyword boost. POST /api/documents/ingest, GET /api/documents. Summary (disclosure style, revised later): one analysis call (prompts/summary_disclosure.md) + one Arabic call (summary_translate_ar.md), cached. Build /summary with document header, AI summary, traceable key-figures table, implications, source list with page/full-PDF downloads, EN/AR tabs. Also switch the video graph's gather_context to use the index.
 ```
 
 **Creates**

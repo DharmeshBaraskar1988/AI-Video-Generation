@@ -129,3 +129,9 @@ export async function uploadFiles(files: File[]) {
   if (!res.ok) throw new Error(typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail));
   return data as { report: { name: string; status: string; reason?: string }[]; documents: DocItem[] };
 }
+
+/** The whole source document as a download (original file name). */
+export const downloadUrl = (docId: number) => `${API_URL}/api/documents/${docId}/download`;
+
+/** Only the cited page of a PDF, as its own small PDF. */
+export const pageExtractUrl = (docId: number, page: number) => `${API_URL}/api/documents/${docId}/pages?start=${page}`;

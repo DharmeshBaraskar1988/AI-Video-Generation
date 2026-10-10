@@ -69,7 +69,7 @@ dstorify-poc/
 │       │   ├── tts/          # base.py (interface), edge.py, silma.py (stub)
 │       │   ├── render.py     # write props JSON, run Remotion, FFmpeg mix
 │       │   └── stock.py      # tickers, quotes, history, cache
-│       ├── prompts/          # script.md, translate_ar.md, summary_section.md, summary_exec.md, qa.md, stock.md
+│       ├── prompts/          # script.md, translate_ar.md, summary_disclosure.md, summary_translate_ar.md, qa.md, stock.md
 │       └── store/            # dstorify.db, chroma/ (git-ignored)
 ├── video/                    # Remotion project
 │   └── src/
@@ -133,7 +133,7 @@ Scene `start`/`end` come from word timings (first/last word of that scene's text
 
 **Render:** `npx remotion render src/index.ts QuarterlyVideo out.mp4 --props=props.json` (run in `video/`), then FFmpeg: voice + music at `MUSIC_VOLUME` with sidechain ducking, `-c:v copy`. Also a 15 s social cut (intro + KPI scene).
 
-**Summary:** ingest every PDF in `data/documents` -> chunks of ~500-800 tokens with `{file, page, section}` metadata -> section summaries (one Gemini call per section) -> executive summary EN + AR with `[file p.N]` citations.
+**Summary (disclosure style):** per company + period, passages from the index (opening pages, statements, auditor's report, notes) -> ONE Gemini call (`summary_disclosure.md`): document facts (issuer, auditor, opinion, board approval), up to 10 key figures copied exactly as printed, a 100-200 word executive summary with `{{F1}}` / `{{F1.prior}}` / `{{F1.change}}` placeholders, 2-4 implications and a full analysis, all citing passages -> ONE Arabic call (`summary_translate_ar.md`). Python checks each figure is printed in its cited passage, computes YoY changes, fills placeholders and flags stray numbers. The page shows the key-figures table with page/note links, and each source can be downloaded as its page extract (`/api/documents/{id}/pages`) or the full document (`/api/documents/{id}/download`).
 
 **Video Q&A:** search script chunks (with timestamps) + document chunks -> top 8 -> Gemini answers ONLY from them, returns `{answer, citations[], timestamp|null}`; below a score threshold reply "not covered" and log.
 
