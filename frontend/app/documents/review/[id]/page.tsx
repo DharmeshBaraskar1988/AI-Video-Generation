@@ -47,7 +47,7 @@ export default function ReviewPage() {
       setReview(r);
       setContent(r.content);
       if (r.status === "extracting") timer.current = setTimeout(load, 3000);
-    });
+    }).catch((e) => setMessage({ ok: false, text: `Could not load the review (is the backend running on port 8000?): ${e.message}` }));
   }, [id]);
 
   useEffect(() => {
@@ -55,7 +55,8 @@ export default function ReviewPage() {
     return () => clearTimeout(timer.current);
   }, [load]);
 
-  if (!review || !content) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  if (!review || !content)
+    return <p className={`text-sm ${message && !message.ok ? "text-red-600" : "text-muted-foreground"}`}>{message?.text ?? "Loading…"}</p>;
   if (review.status === "extracting")
     return (
       <p className="flex items-center gap-2 text-sm text-muted-foreground">

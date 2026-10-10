@@ -14,13 +14,13 @@ Quarterly results -> branded AI video (English + Arabic), cited summary, video Q
 
 ## Run the app (Windows)
 
-Open two terminals in the project folder.
+Double-click **`start.bat`** to open both servers in their own windows (the back end reloads itself when code changes). Or open two terminals in the project folder:
 
 **Back end** (FastAPI, http://localhost:8000):
 
 ```bat
 backend\.venv\Scripts\activate
-uvicorn backend.app.main:app --reload --port 8000
+uvicorn backend.app.main:app --port 8000 --reload --reload-dir backend/app --reload-exclude "backend/app/store/*"
 ```
 
 **Front end** (Next.js, http://localhost:3000):

@@ -165,8 +165,25 @@ def load_all() -> tuple[dict[str, QuarterFile], list[dict[str, str]]]:
         except (ValidationError, json.JSONDecodeError, ValueError) as exc:
             errors.append({"file": path.name, "error": str(exc)})
             continue
-        files[qf.slug] = qf
+        files[qf.slug] = _merge(files[qf.slug], qf) if qf.slug in files else qf
     return files, errors
+
+
+def _merge(a: QuarterFile, b: QuarterFile) -> QuarterFile:
+    """Combine two files for the same company (one file per year, e.g. qnbk_2025 + qnbk_2026)."""
+    by_period = {q.period: q for q in a.quarters if not q.derived}
+    by_period.update({q.period: q for q in b.quarters if not q.derived})
+    quarters = derive_missing(list(by_period.values()))
+    latest = max((q for q in quarters if not q.derived), key=_period_sort_key, default=quarters[-1])
+    history = {h.period: h for h in a.history_net_profit + b.history_net_profit}
+    return a.model_copy(update={
+        "note": " ".join(n for n in (a.note, b.note) if n),
+        "current_quarter": latest.period,
+        "quarters": quarters,
+        "history_net_profit": list(history.values()),
+        "narrative_drivers": list(dict.fromkeys(a.narrative_drivers + b.narrative_drivers)),
+        "source_documents": a.source_documents | b.source_documents,
+    })
 
 
 def quarter_view(qf: QuarterFile, q: Quarter) -> dict[str, Any]:

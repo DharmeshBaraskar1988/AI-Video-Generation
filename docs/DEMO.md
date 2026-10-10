@@ -14,7 +14,7 @@ Gemini's free tier and video rendering are the two slow parts, so do them in adv
 2. **Start the servers** (two terminals, from the project folder):
    ```bat
    backend\.venv\Scripts\activate
-   uvicorn backend.app.main:app --port 8000
+   uvicorn backend.app.main:app --port 8000 --reload --reload-dir backend/app --reload-exclude "backend/app/store/*"
    ```
    ```bat
    cd frontend

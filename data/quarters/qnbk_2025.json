@@ -9,7 +9,7 @@
     "name_ar": "بنك قطر الوطني",
     "ticker": "QNBK"
   },
-  "current_quarter": "H1 2025",
+  "current_quarter": "FY 2025",
   "quarters": [
     {
       "period": "H1 2025",
@@ -26,27 +26,54 @@
         "net_profit_h1_2024": 8161.8,
         "eps_h1_2024": 0.82
       }
+    },
+    {
+      "period": "FY 2025",
+      "months": "Jan-Dec 2025",
+      "derived": false,
+      "sources": [
+        "QNBK-Financials-2025-12-31-XBRL.pdf p.26",
+        "Financial+Statements+for+the+year+ended+2025.pdf p.74",
+        "Financial+Statements+for+the+year+ended+2025.pdf p.79"
+      ],
+      "revenue": 44112.5,
+      "net_profit": 17000.1,
+      "eps_qr": 1.74,
+      "cash_and_bank": 86910.5,
+      "comparatives": {
+        "revenue_fy_2024": 40729.2,
+        "net_profit_fy_2024": 16716.9,
+        "eps_fy_2024": 1.69
+      }
     }
   ],
   "history_net_profit": [
     {
       "period": "H1 2024",
       "ytd_net_profit": 8161.8
+    },
+    {
+      "period": "FY 2024",
+      "ytd_net_profit": 16716.9
     }
   ],
   "narrative_drivers": [
-    "Profit growth was supported by higher income from continuing operations and effective cost management.",
-    "Cash flow was impacted by changes in working capital, including increases in loans and advances to customers and changes in deposits.",
-    "The bank's equity position was influenced by treasury shares transactions and other comprehensive income components such as exchange differences and fair value reserves.",
-    "Earnings per share increased reflecting improved profitability for the period."
+    "Increase in net income from financing activities and investment activities contributed to higher total operating income.",
+    "Higher impairment gain and reversal of impairment loss improved profitability.",
+    "Operating expenses increased due to higher employee benefits and general administrative expenses.",
+    "Net monetary loss arising from hyperinflation decreased compared to previous year, positively impacting profit before income taxes.",
+    "Increase in customer deposits and current accounts supported liquidity position."
   ],
   "source_documents": {
-    "doc_9": "QNBK-Financials-2025-06-30-XBRL.pdf"
+    "doc_9": "QNBK-Financials-2025-06-30-XBRL.pdf",
+    "doc_5": "Financial+Statements+for+the+year+ended+2025.pdf",
+    "doc_8": "QNBK-Financials-2025-12-31-XBRL.pdf"
   },
   "narrative_drivers_ar": [
-    "نمو الأرباح مدعوم بزيادة الدخل من العمليات المستمرة وإدارة التكاليف الفعالة.",
-    "تأثرت التدفقات النقدية بالتغيرات في رأس المال العامل، بما في ذلك الزيادات في القروض والسلف للعملاء والتغيرات في الودائع.",
-    "تأثرت وضعية حقوق الملكية للبنك بعمليات الأسهم الخزينة ومكونات الدخل الشامل الأخرى مثل فروق الصرف واحتياطيات القيمة العادلة.",
-    "ارتفع ربح السهم الواحد مما يعكس تحسناً في الربحية للفترة."
+    "ساهمت الزيادة في صافي الدخل من أنشطة التمويل والاستثمار في ارتفاع إجمالي الدخل التشغيلي.",
+    "تحسن الربحية بسبب زيادة مكاسب انخفاض القيمة وعكس خسائر الانخفاض في القيمة.",
+    "ارتفعت المصاريف التشغيلية بسبب زيادة مزايا الموظفين والمصاريف الإدارية العامة.",
+    "انخفضت الخسارة النقدية الصافية الناجمة عن التضخم المفرط مقارنة بالعام السابق، مما أثر إيجابياً على الربح قبل ضرائب الدخل.",
+    "دعم زيادة ودائع العملاء والحسابات الجارية موقف السيولة."
   ]
 }
