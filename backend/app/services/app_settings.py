@@ -26,6 +26,7 @@ DEFAULTS: dict[str, Any] = {
     "enforce_length": False,  # when on, block approval/rendering outside 2-3 minutes
     "llm_model": settings.gemini_model,
     "arabic_digits": "western",
+    "presenter": "auto",  # animated presenter in the video: auto (matches the voice) | male | female | off
 }
 
 

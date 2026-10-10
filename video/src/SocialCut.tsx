@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { AbsoluteFill, Html5Audio, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Captions } from "./components/Captions";
+import { Presenter } from "./components/Presenter";
 import { Intro } from "./scenes/Intro";
 import { KpiCards } from "./scenes/KpiCards";
 import { alpha, defaultBrand, ThemeContext, type Theme } from "./theme/brand";
@@ -26,8 +27,9 @@ export const SocialCut: React.FC<VideoProps> = (props) => {
       dir: props.direction,
       digits: props.digits ?? "western",
       font: fontFor(props.language),
+      presenter: Boolean(props.presenter),
     }),
-    [brand, props.language, props.direction, props.digits],
+    [brand, props.language, props.direction, props.digits, props.presenter],
   );
 
   const intro = props.scenes.find((s) => s.type === "intro");
@@ -62,13 +64,18 @@ export const SocialCut: React.FC<VideoProps> = (props) => {
           <Html5Audio src={audioSrc} trimBefore={Math.round(kpiStart * fps)} />
           <KpiCards data={kpis.data} />
         </Sequence>
+        {props.presenter && (
+          <Sequence from={introFrames} name="presenter">
+            <Presenter words={words.map((w) => ({ ...w, start: w.start - INTRO_SECONDS, end: w.end - INTRO_SECONDS }))} look={props.presenter} />
+          </Sequence>
+        )}
         {props.captions && <Captions words={words} />}
         {props.demo && (
           <div
             style={{
               position: "absolute",
               bottom: 172,
-              insetInlineEnd: 24,
+              [props.presenter ? "insetInlineStart" : "insetInlineEnd"]: 24,
               padding: "8px 18px",
               borderRadius: 30,
               background: alpha(brand.colors.secondary, 0.92),

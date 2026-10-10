@@ -4,14 +4,16 @@ import { alpha, useTheme } from "../theme/brand";
 import { inReadingOrder, localizeDigits } from "../theme/rtl";
 import type { SceneData } from "../types";
 
-const W = 1700;
+const FULL_W = 1700;
+const NARROW_W = 1360; // leaves room for the presenter
 const H = 560;
 const LABEL_SPACE = 110; // under the chart for quarter labels
 const VALUE_SPACE = 56; // above/below bars for value text
 
 /** Net profit by quarter. Losses drop below the zero line in the loss colour. */
 export const TrendChart: React.FC<{ data: SceneData }> = ({ data }) => {
-  const { c, dir, digits } = useTheme();
+  const { c, dir, digits, presenter } = useTheme();
+  const W = presenter ? NARROW_W : FULL_W;
   const frame = useCurrentFrame();
   const bars = inReadingOrder(data.bars ?? [], dir);
 

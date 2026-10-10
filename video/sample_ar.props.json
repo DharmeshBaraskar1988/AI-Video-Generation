@@ -2303,5 +2303,8 @@
  "captions": true,
  "demo": true,
  "company": "صناعات قطر",
- "quarter": "الربع الثاني 2026"
+ "quarter": "الربع الثاني 2026",
+ "presenter": {
+  "gender": "female"
+ }
 }

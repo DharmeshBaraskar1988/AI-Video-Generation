@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { AbsoluteFill, Html5Audio, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Captions } from "./components/Captions";
+import { Presenter } from "./components/Presenter";
 import { Drivers } from "./scenes/Drivers";
 import { Intro } from "./scenes/Intro";
 import { KpiCards } from "./scenes/KpiCards";
@@ -34,12 +35,12 @@ const Fade: React.FC<{ duration: number; fadeIn: boolean; children: React.ReactN
   return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
 };
 
-const DemoBadge: React.FC<{ label: string; color: string }> = ({ label, color }) => (
+const DemoBadge: React.FC<{ label: string; color: string; start?: boolean }> = ({ label, color, start }) => (
   <div
     style={{
       position: "absolute",
       bottom: 172, // just above the caption band, clear of titles and logo
-      insetInlineEnd: 24,
+      [start ? "insetInlineStart" : "insetInlineEnd"]: 24,
       padding: "8px 18px",
       borderRadius: 30,
       background: color,
@@ -63,8 +64,9 @@ export const QuarterlyVideo: React.FC<VideoProps> = (props) => {
       dir: props.direction,
       digits: props.digits ?? "western",
       font: fontFor(props.language),
+      presenter: Boolean(props.presenter),
     }),
-    [brand, props.language, props.direction, props.digits],
+    [brand, props.language, props.direction, props.digits, props.presenter],
   );
 
   // A scene's visuals run from the start of its narration clip to the start of the next one.
@@ -95,11 +97,13 @@ export const QuarterlyVideo: React.FC<VideoProps> = (props) => {
             </Sequence>
           );
         })}
+        {props.presenter && <Presenter words={props.words} look={props.presenter} />}
         {props.captions && <Captions words={props.words} />}
         {props.demo && (
           <DemoBadge
             label={props.language === "ar" ? "بيانات تجريبية" : "Demo data"}
             color={alpha(brand.colors.secondary, 0.92)}
+            start={Boolean(props.presenter)}
           />
         )}
       </AbsoluteFill>

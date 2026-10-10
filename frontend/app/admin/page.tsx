@@ -31,6 +31,7 @@ type Values = {
   require_audio_review: boolean;
   llm_model: string;
   arabic_digits: "western" | "eastern";
+  presenter: "auto" | "male" | "female" | "off";
 };
 type Track = { file: string; credit: string | null; size_kb: number };
 type CustomVoice = { id: string; name: string; speaker: string; language: string; created_at: string };
@@ -201,6 +202,18 @@ export default function AdminPage() {
               </div>
             </div>
             <Toggle label="Captions" hint="Word-by-word captions burned into the video" checked={values.captions} onChange={(v) => set("captions", v)} />
+            <div>
+              <span className="text-sm font-medium">Presenter</span>
+              <span className="block text-xs text-muted-foreground">Animated character who speaks the narration, beside the charts</span>
+              <div className="flex flex-wrap gap-4">
+                {([["auto", "Match the voice"], ["male", "Male"], ["female", "Female"], ["off", "Off"]] as const).map(([v, label]) => (
+                  <label key={v} className="flex items-center gap-2 py-1 text-sm">
+                    <input type="radio" checked={values.presenter === v} onChange={() => set("presenter", v)} className="accent-[var(--brand-primary)]" />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </div>
             <Toggle label="15-second social cut" hint="Intro + headline figures, for social media" checked={values.social_cut} onChange={(v) => set("social_cut", v)} />
           </CardContent>
         </Card>

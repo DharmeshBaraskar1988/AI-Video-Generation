@@ -106,6 +106,36 @@ def music_credit(track: Path | None) -> str | None:
     return None
 
 
+# Genders of the voices named in CLAUDE.md, so "auto" works without a network call.
+KNOWN_VOICE_GENDERS = {"en-US-GuyNeural": "male", "en-GB-SoniaNeural": "female",
+                       "ar-QA-MoazNeural": "male", "ar-QA-AmalNeural": "female"}
+
+
+def voice_gender(voice: str) -> str:
+    """male | female for an edge-tts voice; looks up the edge voice list when the voice is not known."""
+    if voice in KNOWN_VOICE_GENDERS:
+        return KNOWN_VOICE_GENDERS[voice]
+    try:
+        from ..api.settings import voices
+
+        for lang_voices in voices().values():
+            for v in lang_voices:
+                if v["name"] == voice and v.get("gender"):
+                    return str(v["gender"]).lower()
+    except Exception:  # noqa: BLE001 - offline or custom voice: fall back to the male presenter
+        pass
+    return "male"
+
+
+def presenter_style(lang: str) -> dict[str, str] | None:
+    """The presenter shown in the video, from the Admin setting (auto follows the narration voice)."""
+    mode = get_setting("presenter")
+    if mode == "off":
+        return None
+    gender = mode if mode in ("male", "female") else voice_gender(str(get_setting(f"voice_{lang}")))
+    return {"gender": gender}
+
+
 # ---------- steps ----------
 
 def prepare_props(video_id: str, lang: str, script: dict[str, Any], qf: QuarterFile) -> Path:
@@ -123,6 +153,7 @@ def prepare_props(video_id: str, lang: str, script: dict[str, Any], qf: QuarterF
         captions=bool(get_setting("captions")),
     )
     props["musicCredit"] = music_credit(music_track())
+    props["presenter"] = presenter_style(lang)
     VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
     path = VIDEOS_DIR / f"{video_id}_{lang}.props.json"
     path.write_text(json.dumps(props, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -1,6 +1,7 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { alpha, useTheme } from "../theme/brand";
 import { Logo } from "./Logo";
+import { PRESENTER_WIDTH } from "./Presenter";
 
 /** Spring from 0 to 1 starting at `delay` frames. */
 export const useEnter = (delay = 0, damping = 18): number => {
@@ -17,7 +18,7 @@ export const SceneFrame: React.FC<{ title?: string; subtitle?: string | null; ch
   subtitle,
   children,
 }) => {
-  const { c, dir } = useTheme();
+  const { c, dir, presenter } = useTheme();
   const enter = useEnter(0);
   const frame = useCurrentFrame();
   const bar = interpolate(frame, [4, 24], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -61,8 +62,8 @@ export const SceneFrame: React.FC<{ title?: string; subtitle?: string | null; ch
           position: "absolute",
           top: subtitle ? 290 : 250,
           bottom: CAPTION_SPACE + 40,
-          insetInlineStart: 110,
-          insetInlineEnd: 110,
+          insetInlineStart: presenter ? 90 : 110,
+          insetInlineEnd: presenter ? PRESENTER_WIDTH + 50 : 110,
           display: "flex",
         }}
       >

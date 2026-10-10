@@ -83,6 +83,8 @@ export type Scene = {
 
 export type Word = { text: string; start: number; end: number };
 
+export type PresenterStyle = { gender: "male" | "female" };
+
 export type VideoProps = {
   language: "en" | "ar";
   direction: Direction;
@@ -97,4 +99,5 @@ export type VideoProps = {
   company: string;
   quarter: string;
   musicCredit?: string | null; // shown in the outro when the track's licence requires attribution
+  presenter?: PresenterStyle | null; // animated presenter in the corner; null = off
 };

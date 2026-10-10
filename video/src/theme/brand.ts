@@ -12,6 +12,7 @@ export type Theme = {
   dir: VideoProps["direction"];
   digits: VideoProps["digits"];
   font: string;
+  presenter: boolean; // scenes leave room on the inline-end side for the presenter
 };
 
 export const ThemeContext = createContext<Theme | null>(null);

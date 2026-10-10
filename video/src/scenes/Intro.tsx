@@ -8,7 +8,7 @@ import type { SceneData } from "../types";
 const BARS = [0.35, 0.55, 0.45, 0.75, 0.6, 0.95];
 
 export const Intro: React.FC<{ data: SceneData }> = ({ data }) => {
-  const { c, dir, digits } = useTheme();
+  const { c, dir, digits, presenter } = useTheme();
   const frame = useCurrentFrame();
   const logo = useEnter(0, 14);
   const kicker = useEnter(10);
@@ -17,13 +17,13 @@ export const Intro: React.FC<{ data: SceneData }> = ({ data }) => {
 
   return (
     <AbsoluteFill dir={dir} style={{ background: c.primary, color: "white", overflow: "hidden" }}>
-      {/* rising bars motif */}
+      {/* rising bars motif (the presenter stands there when shown) */}
       <div
         style={{
           position: "absolute",
           insetInlineEnd: 120,
           bottom: 150,
-          display: "flex",
+          display: presenter ? "none" : "flex",
           alignItems: "flex-end",
           gap: 26,
           height: 520,

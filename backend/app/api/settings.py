@@ -50,6 +50,7 @@ class SettingsUpdate(BaseModel):
     require_audio_review: bool | None = None
     llm_model: str | None = None
     arabic_digits: Literal["western", "eastern"] | None = None
+    presenter: Literal["auto", "male", "female", "off"] | None = None
 
     @field_validator("voice_rate", "voice_rate_en", "voice_rate_ar")
     @classmethod

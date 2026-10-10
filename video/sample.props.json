@@ -2213,5 +2213,8 @@
  "captions": true,
  "demo": true,
  "company": "Industries Qatar",
- "quarter": "Q2 2026"
+ "quarter": "Q2 2026",
+ "presenter": {
+  "gender": "male"
+ }
 }
